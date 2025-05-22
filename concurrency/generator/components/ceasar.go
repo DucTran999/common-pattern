@@ -1,0 +1,45 @@
+package components
+
+import (
+	"fmt"
+	"unicode"
+)
+
+// CaesarEncrypt shifts letters by 'shift' positions
+func CaesarEncrypt(text string, shift int) string {
+	shift = shift % 26
+	result := []rune{}
+
+	for _, ch := range text {
+		if unicode.IsLetter(ch) {
+			base := 'A'
+			if unicode.IsLower(ch) {
+				base = 'a'
+			}
+			// Rotate and wrap using modulo
+			encrypted := (ch-base+rune(shift))%26 + base
+			result = append(result, encrypted)
+		} else {
+			// Keep non-letter characters unchanged
+			result = append(result, ch)
+		}
+	}
+
+	return string(result)
+}
+
+// CaesarDecrypt reverses the Caesar encryption
+func CaesarDecrypt(text string, shift int) string {
+	return CaesarEncrypt(text, 26-shift)
+}
+
+func main() {
+	plaintext := "Hello, Alice!"
+	shift := 3
+
+	encrypted := CaesarEncrypt(plaintext, shift)
+	fmt.Println("Encrypted:", encrypted)
+
+	decrypted := CaesarDecrypt(encrypted, shift)
+	fmt.Println("Decrypted:", decrypted)
+}
