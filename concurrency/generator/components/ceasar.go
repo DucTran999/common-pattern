@@ -1,7 +1,6 @@
 package components
 
 import (
-	"fmt"
 	"unicode"
 )
 
@@ -31,15 +30,4 @@ func CaesarEncrypt(text string, shift int) string {
 // CaesarDecrypt reverses the Caesar encryption
 func CaesarDecrypt(text string, shift int) string {
 	return CaesarEncrypt(text, 26-shift)
-}
-
-func main() {
-	plaintext := "Hello, Alice!"
-	shift := 3
-
-	encrypted := CaesarEncrypt(plaintext, shift)
-	fmt.Println("Encrypted:", encrypted)
-
-	decrypted := CaesarDecrypt(encrypted, shift)
-	fmt.Println("Decrypted:", decrypted)
 }
