@@ -40,7 +40,7 @@ func createWorkerPool(numberOfWorkers int) {
 
 func main() {
 	s := time.Now()
-	path, err := utils.BuildFilePath("/concurrency/worker-pool/data.csv")
+	path, err := utils.BuildFilePath("/concurrency/worker-pool/mock_data.csv")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -62,7 +62,8 @@ func main() {
 
 	go func() {
 		for i, record := range records {
-			if i == 0 {
+			if i == 0 || len(record) < 6 {
+				log.Printf("Skipping record %d: insufficient columns (expected 6, got %d)\n", i, len(record))
 				continue
 			}
 
