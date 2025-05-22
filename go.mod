@@ -1,6 +1,6 @@
 module patterns
 
-go 1.23.1
+go 1.24
 
 require (
 	github.com/labstack/gommon v0.4.2
