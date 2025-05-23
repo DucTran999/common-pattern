@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -10,7 +11,7 @@ func BuildFilePath(fileName string) (string, error) {
 	// Get the current working directory
 	dir, err := os.Getwd()
 	if err != nil {
-		return "", fmt.Errorf("error getting current working directory: %v", err)
+		return "", fmt.Errorf("error getting current working directory: %w", err)
 	}
 
 	for {
@@ -26,5 +27,5 @@ func BuildFilePath(fileName string) (string, error) {
 		dir = parentDir
 	}
 
-	return "", fmt.Errorf("go.mod not found")
+	return "", errors.New("go.mod not found")
 }

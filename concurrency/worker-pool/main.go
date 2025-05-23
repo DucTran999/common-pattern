@@ -45,11 +45,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	file, err := os.Open(path)
+	file, err := os.Open(path) // #nosec G304
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer file.Close()
+	defer func() {
+		err = file.Close()
+		log.Println("failed to close file:", err)
+	}()
 
 	numberOfWorker := runtime.NumCPU() * 2
 	createWorkerPool(numberOfWorker)
@@ -57,7 +60,8 @@ func main() {
 	reader := csv.NewReader(file)
 	records, err := reader.ReadAll()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return
 	}
 
 	go func() {
