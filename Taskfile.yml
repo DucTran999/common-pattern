@@ -1,0 +1,17 @@
+version: '3'
+
+dotenv:
+  - ".env"
+
+tasks:
+  default: 
+    desc: 'show all available tasks'
+    cmds:
+      - task --list-all
+    silent: true
+
+  run:
+    desc: 'start the app'
+    cmds:
+      - scripts/run.sh
+    silent: true
