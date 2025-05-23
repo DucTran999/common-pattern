@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"patterns/utils"
+	"runtime"
 	"sync"
 	"time"
 )
@@ -32,7 +33,6 @@ func worker(id int) {
 
 func createWorkerPool(numberOfWorkers int) {
 	for i := range numberOfWorkers {
-		log.Println("worker id:", i)
 		wg.Add(1)
 		go worker(i)
 	}
@@ -40,7 +40,7 @@ func createWorkerPool(numberOfWorkers int) {
 
 func main() {
 	s := time.Now()
-	path, err := utils.BuildFilePath("/concurrency/worker-pool/mock_data.csv")
+	path, err := utils.BuildFilePath("concurrency/worker-pool/mock_data.csv")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -51,7 +51,7 @@ func main() {
 	}
 	defer file.Close()
 
-	numberOfWorker := 1000
+	numberOfWorker := runtime.NumCPU() * 2
 	createWorkerPool(numberOfWorker)
 
 	reader := csv.NewReader(file)
@@ -62,9 +62,12 @@ func main() {
 
 	go func() {
 		for i, record := range records {
-			if i == 0 || len(record) < 6 {
-				log.Printf("Skipping record %d: insufficient columns (expected 6, got %d)\n", i, len(record))
+			if i == 0 { // Skip header line
 				continue
+			}
+
+			if len(record) < 6 {
+				log.Printf("Skipping record %d: insufficient columns (expected 6, got %d)\n", i, len(record))
 			}
 
 			job := Job{
