@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"os/signal"
 	"patterns/concurrency/generator/components"
 	"syscall"
@@ -51,6 +52,7 @@ func closeApp(cancel context.CancelFunc) {
 	// Cancel the main context (e.g., passed to workers, generators, etc.)
 	cancel()
 
-	// Optional: Wait a bit to allow graceful cleanup
+	// Wait a bit to allow graceful cleanup
 	time.Sleep(2 * time.Second)
+	log.Println("shutdown app")
 }

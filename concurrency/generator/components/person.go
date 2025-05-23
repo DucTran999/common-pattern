@@ -3,6 +3,8 @@ package components
 import (
 	"fmt"
 	"log"
+
+	"github.com/DucTran999/shared-pkg/scrypto/caesar"
 )
 
 type person struct {
@@ -31,25 +33,22 @@ func NewPerson(
 func (p *person) Chat() {
 	sent := p.turn
 	msgIndex := 0
+
 	for nonce := range p.SecretChan {
-		if sent%2 == 0 {
-			go func() {
-				if msgIndex < len(p.messages) {
-					p.sendChan <- CaesarEncrypt(p.messages[msgIndex], nonce)
-					msgIndex++
-					sent++
-				} else {
-					log.Fatal("end")
-				}
-			}()
-		} else {
-			go func() {
-				cipher := <-p.receivedChan
-				log.Printf("%s got cipher: %v", p.name, cipher)
-				log.Printf("%s received message: %v", p.name, CaesarDecrypt(cipher, nonce))
-				fmt.Println("---------------------------------------------------------")
-				sent++
-			}()
+		if sent%2 == 0 { // my turn to SEND
+			if msgIndex >= len(p.messages) {
+				log.Printf("%s: all messages sent - closing chat", p.name)
+				close(p.sendChan)
+				return
+			}
+			p.sendChan <- caesar.CaesarEncrypt(p.messages[msgIndex], nonce)
+			msgIndex++
+		} else { // my turn to RECEIVE
+			cipher := <-p.receivedChan
+			log.Printf("%s got cipher: %q", p.name, cipher)
+			log.Printf("%s received message: %q", p.name, caesar.CaesarDecrypt(cipher, nonce))
+			fmt.Println("---------------------------------------------------------")
 		}
+		sent++
 	}
 }
