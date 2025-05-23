@@ -30,8 +30,8 @@ func main() {
 	go func() {
 		for s := range secretChan {
 			secret := s
-			go func(val int) { bob.SecretChan <- val }(secret)
-			go func(val int) { alice.SecretChan <- val }(secret)
+			bob.SecretChan <- secret
+			alice.SecretChan <- secret
 		}
 	}()
 
