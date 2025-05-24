@@ -38,10 +38,12 @@ func (r *router) SendArp() {
 		r.broadcast <- ip
 
 		// Listening for MAC IP reply from switch
-		for ack := range r.listenChan {
+		select {
+		case ack := <-r.listenChan:
 			log.Printf("Router: IP: %s - MAC: %s", ip, ack)
 			log.Println("----------------------------------------------")
-			break
+		case <-time.After(5 * time.Second):
+			log.Printf("Router: Timeout waiting for MAC reply for IP: %s", ip)
 		}
 	}
 	close(r.broadcast)
