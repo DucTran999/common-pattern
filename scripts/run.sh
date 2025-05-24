@@ -7,6 +7,7 @@ show_menu() {
     echo "========== MENU =========="
     echo "1) worker pool"
     echo "2) generator"
+    echo "3) multiplexing"
     echo "0) Exit"
     echo "=========================="
 }
@@ -24,6 +25,11 @@ case "$choice" in
     clear
     echo "generator example"
     go run $CONCURRENCY_PKG/generator/main.go
+    ;;
+3)
+    clear
+    echo "multiplexing example"
+    go run $CONCURRENCY_PKG/multiplexing/main.go
     ;;
 0)
     echo "Goodbye!"
