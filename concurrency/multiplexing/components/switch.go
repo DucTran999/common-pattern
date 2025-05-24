@@ -37,9 +37,7 @@ func (s *switchDevice) BroadcastChan() BroadcastChan {
 }
 
 func (s *switchDevice) RegisterDeviceUnicast(unicastChannels ...UnicastChan) {
-	for _, u := range unicastChannels {
-		s.unicastChannels = append(s.unicastChannels, u)
-	}
+	s.unicastChannels = append(s.unicastChannels, unicastChannels...)
 }
 
 func (s *switchDevice) Listen() {
