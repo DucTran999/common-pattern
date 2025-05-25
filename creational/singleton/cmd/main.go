@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"patterns/singleton"
+	"patterns/creational/singleton"
 )
 
 func main() {
