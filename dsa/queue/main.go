@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"slices"
 	"sync"
 )
 
@@ -47,7 +46,7 @@ func (q *queue) Dequeue() (int, error) {
 	}
 
 	val := q.list[0]
-	q.list = slices.Clone(q.list[0 : len(q.list)-1])
+	q.list = q.list[1:]
 
 	return val, nil
 }
