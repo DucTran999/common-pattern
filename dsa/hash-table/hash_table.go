@@ -67,6 +67,11 @@ func (b *bucket) find(k string) bool {
 }
 
 func (b *bucket) delete(k string) {
+	// Handle empty bucket
+	if b.head == nil {
+		return
+	}
+
 	// If element need to find is root of bucket
 	// unlink it by point to the next bucket node
 	if b.head.key == k {
@@ -81,7 +86,9 @@ func (b *bucket) delete(k string) {
 		if prevNode.next.key == k {
 			// remove
 			prevNode.next = prevNode.next.next
+			return // Exit after deletion to avoid no used loop
 		}
+
 		prevNode = prevNode.next
 	}
 }
