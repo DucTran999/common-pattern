@@ -54,7 +54,12 @@ func AutoSendRequest() {
 			if err != nil {
 				log.Error().Str("err", err.Error()).Msg("make request error")
 			}
-			defer func() { _ = resp.Body.Close() }()
+
+			defer func() {
+				if err := resp.Body.Close(); err != nil {
+					log.Error().Err(err).Msg("failed to close response body")
+				}
+			}()
 
 			body, _ := io.ReadAll(resp.Body)
 			fmt.Println(string(body))

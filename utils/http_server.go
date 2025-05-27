@@ -62,7 +62,10 @@ func (s *SimpleHTTPServer) reqHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	reqID := vars["req_id"]
 	time.Sleep(time.Second * 4)
-	_, _ = fmt.Fprintf(w, "Server %d, handle request %s!", s.ID, reqID)
+
+	if _, err := fmt.Fprintf(w, "Server %d, handle request %s!", s.ID, reqID); err != nil {
+		log.Error().Err(err).Msg("failed to write response")
+	}
 }
 
 // Method to initialize routes
