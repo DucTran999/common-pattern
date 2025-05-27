@@ -41,16 +41,18 @@ func main() {
 
 	go func() {
 		for i := range 20 {
-			c := http.Client{}
-			endpoint := fmt.Sprintf("http://localhost:8080/req/%d", i)
-			resp, err := c.Get(endpoint)
-			if err != nil {
-				log.Error().Str("err", err.Error()).Msg("make request error")
-			}
-			defer resp.Body.Close()
+			go func() {
+				c := http.Client{}
+				endpoint := fmt.Sprintf("http://localhost:8080/req/%d", i)
+				resp, err := c.Get(endpoint)
+				if err != nil {
+					log.Error().Str("err", err.Error()).Msg("make request error")
+				}
+				defer resp.Body.Close()
 
-			body, _ := io.ReadAll(resp.Body)
-			fmt.Println(string(body))
+				body, _ := io.ReadAll(resp.Body)
+				fmt.Println(string(body))
+			}()
 
 			time.Sleep(time.Millisecond * 500)
 		}
