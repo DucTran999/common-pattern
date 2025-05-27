@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -17,21 +18,21 @@ import (
 func main() {
 	s1 := utils.NewSimpleHTTPServer("localhost", 11111, 1)
 	go func() {
-		if err := s1.Start(); err != nil && err != http.ErrServerClosed {
+		if err := s1.Start(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Error().Str("err", err.Error()).Msg("Server 1 stopped")
 		}
 	}()
 
 	s2 := utils.NewSimpleHTTPServer("localhost", 11112, 2)
 	go func() {
-		if err := s2.Start(); err != nil && err != http.ErrServerClosed {
+		if err := s2.Start(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Error().Str("err", err.Error()).Msg("Server 2 stopped")
 		}
 	}()
 
 	s3 := utils.NewSimpleHTTPServer("localhost", 11113, 3)
 	go func() {
-		if err := s3.Start(); err != nil && err != http.ErrServerClosed {
+		if err := s3.Start(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Error().Str("err", err.Error()).Msg("Server 3 stopped")
 		}
 	}()
@@ -39,26 +40,28 @@ func main() {
 	time.Sleep(time.Second * 3)
 	StartLoadBalancer()
 
-	go func() {
-		for i := range 20 {
-			go func() {
-				c := http.Client{}
-				endpoint := fmt.Sprintf("http://localhost:8080/req/%d", i)
-				resp, err := c.Get(endpoint)
-				if err != nil {
-					log.Error().Str("err", err.Error()).Msg("make request error")
-				}
-				defer resp.Body.Close()
-
-				body, _ := io.ReadAll(resp.Body)
-				fmt.Println(string(body))
-			}()
-
-			time.Sleep(time.Millisecond * 500)
-		}
-	}()
+	go AutoSendRequest()
 
 	GracefulShutdown(s1.Stop, s2.Stop, s3.Stop)
+}
+
+func AutoSendRequest() {
+	for i := range 20 {
+		go func() {
+			c := http.Client{}
+			endpoint := fmt.Sprintf("http://localhost:8080/req/%d", i)
+			resp, err := c.Get(endpoint)
+			if err != nil {
+				log.Error().Str("err", err.Error()).Msg("make request error")
+			}
+			defer func() { _ = resp.Body.Close() }()
+
+			body, _ := io.ReadAll(resp.Body)
+			fmt.Println(string(body))
+		}()
+
+		time.Sleep(time.Second * 1)
+	}
 }
 
 func StartLoadBalancer() {
@@ -75,7 +78,15 @@ func StartLoadBalancer() {
 
 	go func() {
 		log.Info().Msg("Load Balancer running on :8080")
-		if err := http.ListenAndServe(":8080", lb); err != nil {
+		server := &http.Server{
+			Addr:         ":8080",
+			Handler:      lb,
+			ReadTimeout:  10 * time.Second,
+			WriteTimeout: 10 * time.Second,
+			IdleTimeout:  60 * time.Second,
+		}
+
+		if err := server.ListenAndServe(); err != nil {
 			log.Fatal().Str("err", err.Error()).Msg("failed to start load balancer")
 		}
 	}()

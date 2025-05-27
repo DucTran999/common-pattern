@@ -11,7 +11,6 @@ import (
 
 type loadBalancer struct {
 	backends []*url.URL
-	proxy    *httputil.ReverseProxy
 	counter  uint64
 }
 
@@ -22,7 +21,7 @@ func NewLoadBalancer(targets []string) (*loadBalancer, error) {
 		u, err := url.Parse(target)
 
 		if err != nil {
-			return nil, fmt.Errorf("Invalid backend URL: %w", err)
+			return nil, fmt.Errorf("invalid backend URL: %w", err)
 		}
 		urls = append(urls, u)
 	}
