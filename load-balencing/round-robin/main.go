@@ -53,6 +53,7 @@ func AutoSendRequest() {
 			resp, err := c.Get(endpoint)
 			if err != nil {
 				log.Error().Str("err", err.Error()).Msg("make request error")
+				return
 			}
 
 			defer func() {

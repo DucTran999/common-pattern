@@ -6,12 +6,15 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"sync"
 	"sync/atomic"
 )
 
 type loadBalancer struct {
 	backends []*url.URL
+	proxy    *httputil.ReverseProxy
 	counter  uint64
+	once     sync.Once
 }
 
 func NewLoadBalancer(targets []string) (*loadBalancer, error) {
@@ -33,7 +36,7 @@ func (lb *loadBalancer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	target := lb.getNextBackend()
 	log.Printf("Forwarding request to: %s\n", target)
 
-	proxy := httputil.NewSingleHostReverseProxy(target)
+	proxy := lb.getOrCreateProxy(target)
 	proxy.ServeHTTP(w, r)
 }
 
@@ -42,4 +45,11 @@ func (lb *loadBalancer) getNextBackend() *url.URL {
 	idx := atomic.AddUint64(&lb.counter, 1)
 
 	return lb.backends[idx%uint64(len(lb.backends))]
+}
+
+func (lb *loadBalancer) getOrCreateProxy(target *url.URL) *httputil.ReverseProxy {
+	lb.once.Do(func() {
+		lb.proxy = httputil.NewSingleHostReverseProxy(target)
+	})
+	return lb.proxy
 }
