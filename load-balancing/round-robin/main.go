@@ -16,21 +16,21 @@ import (
 )
 
 func main() {
-	s1 := utils.NewSimpleHTTPServer("localhost", 11111, 1)
+	s1 := utils.NewSimpleHTTPServer("localhost", 11111, 1, 2)
 	go func() {
 		if err := s1.Start(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Error().Str("err", err.Error()).Msg("Server 1 stopped")
 		}
 	}()
 
-	s2 := utils.NewSimpleHTTPServer("localhost", 11112, 2)
+	s2 := utils.NewSimpleHTTPServer("localhost", 11112, 2, 2)
 	go func() {
 		if err := s2.Start(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Error().Str("err", err.Error()).Msg("Server 2 stopped")
 		}
 	}()
 
-	s3 := utils.NewSimpleHTTPServer("localhost", 11113, 3)
+	s3 := utils.NewSimpleHTTPServer("localhost", 11113, 3, 2)
 	go func() {
 		if err := s3.Start(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Error().Str("err", err.Error()).Msg("Server 3 stopped")
@@ -47,8 +47,8 @@ func main() {
 
 func AutoSendRequest() {
 	for i := range 20 {
+		c := http.Client{}
 		go func() {
-			c := http.Client{}
 			endpoint := fmt.Sprintf("http://localhost:8080/req/%d", i)
 			resp, err := c.Get(endpoint)
 			if err != nil {
