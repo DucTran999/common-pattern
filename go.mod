@@ -4,7 +4,9 @@ go 1.24
 
 require (
 	github.com/DucTran999/shared-pkg v0.0.0-20250523033839-7cc82356af6d
+	github.com/gorilla/mux v1.8.1
 	github.com/labstack/gommon v0.4.2
+	github.com/rs/zerolog v1.34.0
 	github.com/stretchr/testify v1.10.0
 )
 
