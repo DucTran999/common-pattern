@@ -2,12 +2,15 @@
 
 # path Variable
 CONCURRENCY_PKG=concurrency
+LOAD_BALANCE_PKG=load-balancing
 
 show_menu() {
     echo "========== MENU =========="
     echo "1) worker pool"
     echo "2) generator"
     echo "3) multiplexing"
+    echo "===== Load balancing ====="
+    echo "4) load balance alg: round-robin"
     echo "0) Exit"
     echo "=========================="
 }
@@ -30,6 +33,11 @@ case "$choice" in
     clear
     echo "multiplexing example"
     go run $CONCURRENCY_PKG/multiplexing/main.go
+    ;;
+4)
+    clear
+    echo "load balancing"
+    go run $LOAD_BALANCE_PKG/round-robin/main.go
     ;;
 0)
     echo "Goodbye!"

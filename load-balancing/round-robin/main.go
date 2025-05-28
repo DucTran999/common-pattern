@@ -7,7 +7,7 @@ import (
 	"io"
 	"net/http"
 	"os/signal"
-	"patterns/load-balencing/round-robin/components"
+	"patterns/load-balancing/round-robin/components"
 	"patterns/utils"
 	"syscall"
 	"time"

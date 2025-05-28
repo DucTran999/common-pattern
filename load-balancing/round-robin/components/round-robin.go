@@ -6,15 +6,12 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
-	"sync"
 	"sync/atomic"
 )
 
 type loadBalancer struct {
 	backends []*url.URL
-	proxy    *httputil.ReverseProxy
 	counter  uint64
-	once     sync.Once
 }
 
 func NewLoadBalancer(targets []string) (*loadBalancer, error) {
@@ -48,8 +45,5 @@ func (lb *loadBalancer) getNextBackend() *url.URL {
 }
 
 func (lb *loadBalancer) getOrCreateProxy(target *url.URL) *httputil.ReverseProxy {
-	lb.once.Do(func() {
-		lb.proxy = httputil.NewSingleHostReverseProxy(target)
-	})
-	return lb.proxy
+	return httputil.NewSingleHostReverseProxy(target)
 }
