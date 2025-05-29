@@ -12,7 +12,20 @@ type roundRobin struct {
 }
 
 func NewRoundRobinAlg(targets []*utils.SimpleHTTPServer) (*roundRobin, error) {
-	return &roundRobin{backends: targets}, nil
+	if len(targets) == 0 {
+		return nil, ErrNoTargetServersFound
+	}
+
+	// Validate backend URLs
+	for _, target := range targets {
+		if target.GetUrl() == nil {
+			return nil, ErrInvalidBackendUrl
+		}
+	}
+
+	return &roundRobin{
+		backends: targets,
+	}, nil
 }
 
 // Round robin
