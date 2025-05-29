@@ -36,7 +36,8 @@ case "$choice" in
     ;;
 4)
     clear
-    echo "load balancing"
+    echo "======== APP: load balancing ========"
+    echo "--------------------------------------"
     go run $LOAD_BALANCE_PKG/round-robin/main.go
     ;;
 0)

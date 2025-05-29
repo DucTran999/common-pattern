@@ -13,5 +13,6 @@ tasks:
   run:
     desc: 'start the app'
     cmds:
+      - golangci-lint run --timeout 5m --config .golangci.yml
       - scripts/run.sh
     silent: true
