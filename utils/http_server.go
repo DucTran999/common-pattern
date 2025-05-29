@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -28,6 +29,25 @@ func NewSimpleHTTPServer(host string, port int, id, weight int) *SimpleHTTPServe
 		Weight: weight,
 		Router: mux.NewRouter(),
 	}
+}
+
+func (s *SimpleHTTPServer) GetWeight() int {
+	return s.Weight
+}
+
+func (s *SimpleHTTPServer) GetUrl() *url.URL {
+	scheme := "http"
+
+	if s.Port == 443 {
+		scheme = "https"
+	}
+
+	buildUrl := &url.URL{
+		Scheme: scheme,
+		Host:   fmt.Sprintf("%s:%d", s.Host, s.Port),
+	}
+
+	return buildUrl
 }
 
 // Start the server
