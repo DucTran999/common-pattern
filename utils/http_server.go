@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -14,18 +15,39 @@ type SimpleHTTPServer struct {
 	Host   string
 	Port   int
 	ID     int
+	Weight int
 	Router *mux.Router
 	Server *http.Server
 }
 
 // Constructor function
-func NewSimpleHTTPServer(host string, port int, id int) *SimpleHTTPServer {
+func NewSimpleHTTPServer(host string, port int, id, weight int) *SimpleHTTPServer {
 	return &SimpleHTTPServer{
 		Host:   host,
 		Port:   port,
 		ID:     id,
+		Weight: weight,
 		Router: mux.NewRouter(),
 	}
+}
+
+func (s *SimpleHTTPServer) GetWeight() int {
+	return s.Weight
+}
+
+func (s *SimpleHTTPServer) GetUrl() *url.URL {
+	scheme := "http"
+
+	if s.Port == 443 {
+		scheme = "https"
+	}
+
+	buildUrl := &url.URL{
+		Scheme: scheme,
+		Host:   fmt.Sprintf("%s:%d", s.Host, s.Port),
+	}
+
+	return buildUrl
 }
 
 // Start the server
@@ -61,7 +83,8 @@ func (s *SimpleHTTPServer) Stop(ctx context.Context) error {
 func (s *SimpleHTTPServer) reqHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	reqID := vars["req_id"]
-	time.Sleep(time.Second * 4)
+	handleTime := time.Second * time.Duration(1/s.Weight)
+	time.Sleep(handleTime)
 
 	if _, err := fmt.Fprintf(w, "Server %d, handle request %s!", s.ID, reqID); err != nil {
 		log.Error().Err(err).Msg("failed to write response")

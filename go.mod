@@ -1,6 +1,6 @@
 module patterns
 
-go 1.24
+go 1.23.1
 
 require (
 	github.com/DucTran999/shared-pkg v0.0.0-20250523033839-7cc82356af6d

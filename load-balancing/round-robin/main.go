@@ -7,7 +7,7 @@ import (
 	"io"
 	"net/http"
 	"os/signal"
-	"patterns/load-balancing/round-robin/components"
+	loadbalancer "patterns/load-balancing/load_balancer"
 	"patterns/utils"
 	"syscall"
 	"time"
@@ -16,21 +16,21 @@ import (
 )
 
 func main() {
-	s1 := utils.NewSimpleHTTPServer("localhost", 11111, 1)
+	s1 := utils.NewSimpleHTTPServer("localhost", 11111, 1, 2)
 	go func() {
 		if err := s1.Start(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Error().Str("err", err.Error()).Msg("Server 1 stopped")
 		}
 	}()
 
-	s2 := utils.NewSimpleHTTPServer("localhost", 11112, 2)
+	s2 := utils.NewSimpleHTTPServer("localhost", 11112, 2, 2)
 	go func() {
 		if err := s2.Start(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Error().Str("err", err.Error()).Msg("Server 2 stopped")
 		}
 	}()
 
-	s3 := utils.NewSimpleHTTPServer("localhost", 11113, 3)
+	s3 := utils.NewSimpleHTTPServer("localhost", 11113, 3, 2)
 	go func() {
 		if err := s3.Start(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Error().Str("err", err.Error()).Msg("Server 3 stopped")
@@ -38,7 +38,8 @@ func main() {
 	}()
 
 	time.Sleep(time.Second * 3)
-	StartLoadBalancer()
+	servers := []*utils.SimpleHTTPServer{s1, s2, s3}
+	StartLoadBalancer(servers)
 
 	go AutoSendRequest()
 
@@ -47,8 +48,8 @@ func main() {
 
 func AutoSendRequest() {
 	for i := range 20 {
+		c := http.Client{}
 		go func() {
-			c := http.Client{}
 			endpoint := fmt.Sprintf("http://localhost:8080/req/%d", i)
 			resp, err := c.Get(endpoint)
 			if err != nil {
@@ -70,30 +71,15 @@ func AutoSendRequest() {
 	}
 }
 
-func StartLoadBalancer() {
-	targets := []string{
-		"http://localhost:11111",
-		"http://localhost:11112",
-		"http://localhost:11113",
-	}
-
-	lb, err := components.NewLoadBalancer(targets)
+func StartLoadBalancer(targets []*utils.SimpleHTTPServer) {
+	lb, err := loadbalancer.NewLoadBalancer("localhost", 8080, targets, loadbalancer.RoundRobin)
 	if err != nil {
 		log.Fatal().Str("err", err.Error()).Msg("failed to init loadbalancer")
 	}
 
 	go func() {
-		log.Info().Msg("Load Balancer running on :8080")
-		server := &http.Server{
-			Addr:         ":8080",
-			Handler:      lb,
-			ReadTimeout:  10 * time.Second,
-			WriteTimeout: 10 * time.Second,
-			IdleTimeout:  60 * time.Second,
-		}
-
-		if err := server.ListenAndServe(); err != nil {
-			log.Fatal().Str("err", err.Error()).Msg("failed to start load balancer")
+		if err := lb.Start(); err != nil {
+			log.Error().Str("error", err.Error()).Msg("err start load balancer")
 		}
 	}()
 }
