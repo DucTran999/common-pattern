@@ -84,7 +84,7 @@ func (s *SimpleHTTPServer) reqHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	reqID := vars["req_id"]
 	handleTime := time.Second * time.Duration(1/s.Weight)
-	time.Sleep(time.Second * handleTime)
+	time.Sleep(handleTime)
 
 	if _, err := fmt.Fprintf(w, "Server %d, handle request %s!", s.ID, reqID); err != nil {
 		log.Error().Err(err).Msg("failed to write response")

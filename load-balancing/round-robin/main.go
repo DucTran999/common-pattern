@@ -72,7 +72,7 @@ func AutoSendRequest() {
 }
 
 func StartLoadBalancer(targets []*utils.SimpleHTTPServer) {
-	lb, err := loadbalancer.NewLoadBalancer(targets, loadbalancer.RoundRobin)
+	lb, err := loadbalancer.NewLoadBalancer("localhost", 8080, targets, loadbalancer.RoundRobin)
 	if err != nil {
 		log.Fatal().Str("err", err.Error()).Msg("failed to init loadbalancer")
 	}

@@ -1,6 +1,7 @@
 package loadbalancer
 
 import (
+	"fmt"
 	"net/http"
 	"patterns/utils"
 	"time"
@@ -31,12 +32,13 @@ type LoadBalancer interface {
 }
 
 type loadBalancer struct {
-	handler http.Handler
-	server  *http.Server
+	port   int
+	host   string
+	server *http.Server
 }
 
 func NewLoadBalancer(
-	targets []*utils.SimpleHTTPServer, alg Algorithm,
+	host string, port int, targets []*utils.SimpleHTTPServer, alg Algorithm,
 ) (*loadBalancer, error) {
 
 	hdl, err := NewLoadBalancerHandler(alg, targets)
@@ -45,8 +47,10 @@ func NewLoadBalancer(
 	}
 
 	lb := &loadBalancer{
+		host: host,
+		port: port,
 		server: &http.Server{
-			Addr:         ":8080",
+			Addr:         fmt.Sprintf("%s:%d", host, port),
 			Handler:      hdl,
 			ReadTimeout:  10 * time.Second,
 			WriteTimeout: 10 * time.Second,
@@ -58,10 +62,9 @@ func NewLoadBalancer(
 }
 
 func (lb *loadBalancer) Start() error {
-	log.Info().Msg("Load Balancer running on :8080")
+	log.Info().Msgf("Load Balancer running on %s:%d", lb.host, lb.port)
 
 	if err := lb.server.ListenAndServe(); err != nil {
-		log.Fatal().Str("err", err.Error()).Msg("failed to start load balancer")
 		return err
 	}
 
