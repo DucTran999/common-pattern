@@ -3,6 +3,7 @@ package utils
 import (
 	"log"
 	"net/http"
+	"sync"
 	"time"
 )
 
@@ -39,20 +40,43 @@ func NewRequestSender(config RequestSenderConfig) *requestSender {
 }
 
 func (r *requestSender) Start(fn DoRequestCallback) {
+	if r.config.Mode == ParallelMode {
+		r.sendParallel(fn)
+	} else {
+		r.sendSequential(fn)
+	}
+
+	log.Println("[INFO] all request sent")
+	log.Println("[INFO] press Ctrl + C to stop the app")
+}
+
+func (r *requestSender) sendParallel(fn DoRequestCallback) {
 	c := http.Client{}
+	wg := sync.WaitGroup{}
+
 	for i := range r.config.NumOfRequest {
-		if r.config.Mode == ParallelMode {
-			go fn(c, i)
-		} else {
+		wg.Add(1)
+		go func(idx int) {
+			defer wg.Done()
 			fn(c, i)
-		}
+		}(i)
 
 		// Wait a while before send new request
 		time.Sleep(r.config.Jitter)
 	}
 
-	log.Println("[INFO] all request sent")
-	log.Println("[INFO] press Ctrl + c to stop the app")
+	wg.Wait()
+}
+
+func (r *requestSender) sendSequential(fn DoRequestCallback) {
+	c := http.Client{}
+
+	for i := range r.config.NumOfRequest {
+		fn(c, i)
+
+		// Wait a while before send new request
+		time.Sleep(r.config.Jitter)
+	}
 }
 
 // applyConfig will set default value for config when it missing
