@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"math/rand/v2"
 	"net"
 	"net/http"
@@ -69,7 +68,7 @@ func (b *backendBuilder) ShutdownAllBackends(ctx context.Context) error {
 			defer wg.Done()
 			err := b.backends[idx].Stop(ctx)
 			if err != nil {
-				log.Printf("[ERROR] failed to shutdown server %d\n", idx)
+				b.logger.Error().Err(err).Msgf("failed to shutdown server %d\n", idx)
 			}
 		}(i)
 	}
