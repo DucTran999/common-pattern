@@ -2,6 +2,7 @@ package loadbalancer
 
 import (
 	"fmt"
+	"net"
 	"net/http"
 	"patterns/utils"
 	"time"
@@ -62,11 +63,25 @@ func NewLoadBalancer(
 }
 
 func (lb *loadBalancer) Start() error {
-	log.Info().Msgf("Load Balancer running on %s:%d", lb.host, lb.port)
+	// Start HTTP server in a goroutine
+	go func() {
+		if err := lb.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Error().Err(err).Msg("failed to start load balancer")
+		}
+	}()
 
-	if err := lb.server.ListenAndServe(); err != nil {
-		return err
+	// Wait for server to become available
+	address := fmt.Sprintf("localhost:%d", lb.port)
+	for {
+		if conn, err := net.DialTimeout("tcp", address, time.Second); err == nil {
+			if errCloseConn := conn.Close(); errCloseConn != nil {
+				log.Warn().Err(errCloseConn).Msg("failed to close tcp conn")
+			}
+			break
+		}
+		time.Sleep(100 * time.Millisecond) // prevent tight loop
 	}
 
+	log.Info().Msgf("load balancer running on %v", address)
 	return nil
 }

@@ -2,86 +2,48 @@ package main
 
 import (
 	"context"
-	"errors"
-	"fmt"
-	"io"
-	"net/http"
+	"os"
 	"os/signal"
+	"patterns/load-balancing/components"
 	loadbalancer "patterns/load-balancing/load_balancer"
-	"patterns/utils"
 	"syscall"
 	"time"
 
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
 func main() {
-	s1 := utils.NewSimpleHTTPServer("localhost", 11111, 1, 2)
-	go func() {
-		if err := s1.Start(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			log.Error().Str("err", err.Error()).Msg("Server 1 stopped")
-		}
-	}()
+	// Initialize zerolog with ConsoleWriter for pretty terminal output
+	logger := zerolog.New(os.Stderr).With().Timestamp().Logger()
 
-	s2 := utils.NewSimpleHTTPServer("localhost", 11112, 2, 2)
-	go func() {
-		if err := s2.Start(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			log.Error().Str("err", err.Error()).Msg("Server 2 stopped")
-		}
-	}()
+	// Initialize the backend builder and configure number of backend servers
+	backendBuilder := components.NewBackendBuilder(logger)
+	backendBuilder.SetNumberOfBackends(5)
 
-	s3 := utils.NewSimpleHTTPServer("localhost", 11113, 3, 2)
-	go func() {
-		if err := s3.Start(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			log.Error().Str("err", err.Error()).Msg("Server 3 stopped")
-		}
-	}()
-
-	time.Sleep(time.Second * 3)
-	servers := []*utils.SimpleHTTPServer{s1, s2, s3}
-	StartLoadBalancer(servers)
-
-	go AutoSendRequest()
-
-	GracefulShutdown(s1.Stop, s2.Stop, s3.Stop)
-}
-
-func AutoSendRequest() {
-	for i := range 20 {
-		c := http.Client{}
-		go func() {
-			endpoint := fmt.Sprintf("http://localhost:8080/req/%d", i)
-			resp, err := c.Get(endpoint)
-			if err != nil {
-				log.Error().Str("err", err.Error()).Msg("make request error")
-				return
-			}
-
-			defer func() {
-				if err := resp.Body.Close(); err != nil {
-					log.Error().Err(err).Msg("failed to close response body")
-				}
-			}()
-
-			body, _ := io.ReadAll(resp.Body)
-			fmt.Println(string(body))
-		}()
-
-		time.Sleep(time.Second * 1)
-	}
-}
-
-func StartLoadBalancer(targets []*utils.SimpleHTTPServer) {
-	lb, err := loadbalancer.NewLoadBalancer("localhost", 8080, targets, loadbalancer.RoundRobin)
+	// Build the backend servers
+	backends, err := backendBuilder.Build()
 	if err != nil {
-		log.Fatal().Str("err", err.Error()).Msg("failed to init loadbalancer")
+		log.Fatal().Msgf("failed when build backends: %v", err)
 	}
 
-	go func() {
-		if err := lb.Start(); err != nil {
-			log.Error().Str("error", err.Error()).Msg("err start load balancer")
-		}
-	}()
+	// Create a new load balancer on localhost:8080 using the backends and round-robin algorithm
+	lb, err := loadbalancer.NewLoadBalancer("localhost", 8080, backends, loadbalancer.RoundRobin)
+	if err != nil {
+		log.Fatal().Msgf("failed to init loadbalancer: %v", err)
+	}
+
+	// Start the load balancer asynchronously
+	if err := lb.Start(); err != nil {
+		log.Error().Msgf("failed to start load balancer: %v", err)
+	}
+
+	// Initialize a request sender component and start sending requests asynchronously
+	rs := components.NewRequestSender(20)
+	go rs.SendNow()
+
+	// Wait for a graceful shutdown signal and stop the first backend cleanly
+	GracefulShutdown(backendBuilder.ShutdownAllBackends)
 }
 
 // GracefulShutdown handles OS signals and performs a graceful shutdown of the server.
