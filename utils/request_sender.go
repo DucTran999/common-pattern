@@ -58,7 +58,7 @@ func (r *requestSender) sendParallel(fn DoRequestCallback) {
 		wg.Add(1)
 		go func(idx int) {
 			defer wg.Done()
-			fn(c, i)
+			fn(c, idx)
 		}(i)
 
 		// Wait a while before send new request

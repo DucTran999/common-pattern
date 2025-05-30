@@ -65,13 +65,13 @@ func (b *backendBuilder) ShutdownAllBackends(ctx context.Context) error {
 
 	for i := range b.backends {
 		wg.Add(1)
-		go func() {
+		go func(idx int) {
 			defer wg.Done()
-			err := b.backends[i].Stop(ctx)
+			err := b.backends[idx].Stop(ctx)
 			if err != nil {
-				log.Printf("[ERROR] failed to shutdown server %d\n", i)
+				log.Printf("[ERROR] failed to shutdown server %d\n", idx)
 			}
-		}()
+		}(i)
 	}
 
 	// Wait for all server shutdown completely
