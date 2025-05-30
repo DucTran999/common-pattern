@@ -73,7 +73,11 @@ func (lb *loadBalancer) Start() error {
 	// Wait for server to become available
 	address := fmt.Sprintf("localhost:%d", lb.port)
 	for {
-		if conn, err := net.DialTimeout("tcp", address, time.Second); err == nil {
+		// Use a 3s default dial timeout, overrideable via config
+		dialer := net.Dialer{
+			Timeout: 3 * time.Second,
+		}
+		if conn, err := dialer.Dial("tcp", address); err == nil {
 			if errCloseConn := conn.Close(); errCloseConn != nil {
 				log.Warn().Err(errCloseConn).Msg("failed to close tcp conn")
 			}
