@@ -63,7 +63,7 @@ func (s *SimpleHTTPServer) Start() error {
 		IdleTimeout:       60 * time.Second,
 	}
 
-	fmt.Printf("Server running on http://%s\n", addr)
+	log.Info().Msgf("server running on http://%s", addr)
 	return s.Server.ListenAndServe()
 }
 

@@ -1,7 +1,7 @@
 package loadbalancer
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -39,7 +39,7 @@ func NewLoadBalancerHandler(
 
 func (lb *loadBalanceHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	nextUrl := lb.algorithmImpl.GetNextBackend()
-	fmt.Printf("Load Balancer: Forwarding request to: %v\n", nextUrl.String())
+	log.Printf("[INFO] load balancer forwarding request to: %v\n", nextUrl.String())
 
 	proxy := lb.getOrCreateProxy(&nextUrl)
 	proxy.ServeHTTP(w, r)
