@@ -2,6 +2,8 @@ package workerpool
 
 import (
 	"encoding/csv"
+	"errors"
+	"io"
 	"log"
 	"os"
 	"sync"
@@ -19,6 +21,7 @@ func NewWorkerPool(numOfWorker int) *workerPool {
 	return &workerPool{
 		numOfWorkers: numOfWorker,
 		jobs:         make(chan *Job, 100),
+		results:      make(chan int64, 100),
 		wg:           sync.WaitGroup{},
 	}
 }
@@ -42,7 +45,7 @@ func (wp *workerPool) StreamJobFromFile(filename string) error {
 		record, err := reader.Read()
 		if err != nil {
 			// EOF will break the loop
-			if err.Error() == "EOF" {
+			if errors.Is(err, io.EOF) {
 				break
 			}
 
@@ -70,6 +73,9 @@ func (wp *workerPool) SpawnWorkers() {
 }
 
 func (wp *workerPool) CollectResult() {
+	// Close results channel when all workers are done
+	defer close(wp.results)
+
 	go func() {
 		for jobErrId := range wp.results {
 			log.Println("[ERROR] failed when process line:", jobErrId)
