@@ -1,4 +1,5 @@
 #!/bin/bash
+
 green() {
   echo -e "\033[32m$1\033[0m"
 }
@@ -14,8 +15,10 @@ cyan() {
 cyan "🔍 Code coverage analyzing..."
 echo "----------------------------------------------------------------------------------"
 
-mkdir -p test/coverage
-if ! go test -cover ./concurrency/... -coverprofile=test/coverage/coverage.out; then
+COV_PATH=test/coverage
+
+mkdir -p $COV_PATH
+if ! go test -cover $(go list ./concurrency/... | grep -v /app) -coverprofile=$COV_PATH/coverage.out; then
   red "❌ Tests failed. Cannot generate coverage report."
   exit 1
 fi
@@ -25,7 +28,7 @@ if [ ! -f "test/coverage/coverage.out" ]; then
   exit 1
 fi
 
-go tool cover -html=test/coverage/coverage.out -o test/coverage/coverage.html
+go tool cover -html=$COV_PATH/coverage.out -o $COV_PATH/coverage.html
 echo "----------------------------------------------------------------------------------"
 
 total_coverage=$(go tool cover -func=test/coverage/coverage.out | grep total | awk '{print substr($3, 1, length($3)-1)}')

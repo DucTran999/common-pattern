@@ -28,7 +28,7 @@ case "$choice" in
 2)
     clear
     echo "======== APP: Concurrency ========="
-    go run $CONCURRENCY_PKG/generator/main.go
+    go run $CONCURRENCY_PKG/main.go --app-name=generator
     ;;
 3)
     clear

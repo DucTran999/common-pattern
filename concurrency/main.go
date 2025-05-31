@@ -20,6 +20,8 @@ func main() {
 	switch *appName {
 	case "worker-pool":
 		app.ReadCsvWithWorkerPool()
+	case "generator":
+		app.SecretConversationApp()
 	default:
 		logger.Fatal().Msg("[ERROR] app not available")
 	}

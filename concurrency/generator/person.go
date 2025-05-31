@@ -1,4 +1,4 @@
-package components
+package generator
 
 import (
 	"fmt"
@@ -8,17 +8,18 @@ import (
 )
 
 type person struct {
-	name         string
-	SecretChan   chan int
-	sendChan     chan string
-	receivedChan chan string
-	messages     []string
-	turn         int
+	name string // Name of the person
+
+	sendChan     chan string // Channel used by the person to send messages
+	receivedChan chan string // Channel used by the person to receive messages
+	SecretChan   chan int    // Channel through which the person receives the nonce (secret value) from a generator
+
+	turn     int      // Indicates the person's turn in a communication or protocol sequence
+	messages []string // Stores messages sent by the person
 }
 
 func NewPerson(
-	name string, messages []string, sendChan, receivedChan chan string,
-	turn int,
+	name string, messages []string, sendChan, receivedChan chan string, turn int,
 ) *person {
 	return &person{
 		name:         name,

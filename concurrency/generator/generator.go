@@ -1,4 +1,4 @@
-package components
+package generator
 
 import (
 	"context"
@@ -9,8 +9,10 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
+// Generator return a random number in range 0-26 and send it via channel
 func Generator(ctx context.Context) chan int {
 	c := make(chan int, 10)
+
 	go func() {
 		defer close(c)
 		for {
@@ -25,7 +27,7 @@ func Generator(ctx context.Context) chan int {
 					// Add a small delay before retrying to avoid tight loop in case of persistent errors
 					time.Sleep(time.Millisecond * 100)
 				}
-				time.Sleep(time.Second * 2)
+
 				c <- int(n.Int64())
 			}
 		}
