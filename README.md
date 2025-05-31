@@ -32,7 +32,7 @@ The repository is organized into the following directories:
 
 ## Prerequisites
 - Go 1.23 or later installed on your machine.
-- Taskfile CLI installed (https://taskfile.dev/)
+- [Taskfile CLI](https://taskfile.dev/) installed
 
 ## Installation
 Clone the repository:
