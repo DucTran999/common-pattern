@@ -74,15 +74,18 @@ func (wp *workerPool) SpawnWorkers() {
 
 func (wp *workerPool) CollectResult() {
 	// Close results channel when all workers are done
-	defer close(wp.results)
+	done := make(chan struct{})
 
 	go func() {
+		defer close(done)
 		for jobErrId := range wp.results {
 			log.Println("[ERROR] failed when process line:", jobErrId)
 		}
 	}()
 
 	wp.wg.Wait()
+	close(wp.results)
+	<-done // Wait for all results to be processed
 }
 
 func (wp *workerPool) spawnWorker(workerID int) {
