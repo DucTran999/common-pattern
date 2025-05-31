@@ -6,7 +6,14 @@ A personal collection of patterns, concurrency models, and load balancing techni
 [![License](https://img.shields.io/github/license/DucTran999/common-pattern)](LICENSE)
 ![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/DucTran999/common-pattern?utm_source=oss&utm_medium=github&utm_campaign=DucTran999%2Fcommon-pattern&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
 
-## Project Structure
+# Table of Contents
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
+
+# Project Structure
 The repository is organized into the following directories:
 
 - `concurrency/`: Examples demonstrating Go's concurrency primitives, including goroutines, channels, and synchronization techniques.
@@ -22,8 +29,10 @@ The repository is organized into the following directories:
 - `scripts/`: Automation scripts for tasks such as testing, building, and deployment.
 
 # Getting Started
+
 ## Prerequisites
 - Go 1.23 or later installed on your machine.
+- Taskfile CLI installed (https://taskfile.dev/)
 
 ## Installation
 Clone the repository:
