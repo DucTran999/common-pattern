@@ -13,14 +13,30 @@ cyan() {
 
 cyan "🔍 Code coverage analyzing..."
 echo "----------------------------------------------------------------------------------"
+
 mkdir -p test/coverage
-go test -cover ./concurrency/... -coverprofile=test/coverage/coverage.out
+if ! go test -cover ./concurrency/... -coverprofile=test/coverage/coverage.out; then
+  red "❌ Tests failed. Cannot generate coverage report."
+  exit 1
+fi
+
+if [ ! -f "test/coverage/coverage.out" ]; then
+  red "❌ Coverage profile not generated."
+  exit 1
+fi
+
 go tool cover -html=test/coverage/coverage.out -o test/coverage/coverage.html
 echo "----------------------------------------------------------------------------------"
 
 total_coverage=$(go tool cover -func=test/coverage/coverage.out | grep total | awk '{print substr($3, 1, length($3)-1)}')
 coverage_threshold=80.0
-comparison=$(echo "$total_coverage >= $coverage_threshold" | bc -l)
+# Check if bc is available
+if ! command -v bc &> /dev/null; then
+  red "❌ 'bc' command not found. Please install bc for coverage threshold comparison."
+  exit 1
+fi
+
+comparison=$(awk "BEGIN {print ($total_coverage >= $coverage_threshold) ? 1 : 0}")
 if [ "$comparison" -eq 0 ]; then
   red "📈 Total coverage: $total_coverage%"
   red "❌ Code coverage $total_coverage% is below the threshold of $coverage_threshold%."

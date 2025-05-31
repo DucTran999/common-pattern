@@ -12,6 +12,7 @@ import (
 
 func Test_StreamJobFromFile(t *testing.T) {
 	path, err := utils.BuildFilePath("test/data_test/mock_data.csv")
+	require.FileExists(t, path, "test data file not found: %s", path)
 	require.NoError(t, err, "failed to lookup file path")
 
 	// Initialize worker pool
@@ -19,15 +20,19 @@ func Test_StreamJobFromFile(t *testing.T) {
 	wp := workerpool.NewWorkerPool(numberOfWorkers)
 
 	done := make(chan struct{})
+	var streamErr error
 
 	go func() {
 		defer close(done)
-		err := wp.StreamJobFromFile(path)
+		streamErr = wp.StreamJobFromFile(path)
 		assert.NoError(t, err, "failed to stream file")
 	}()
 
 	wp.SpawnWorkers()
 	wp.CollectResult()
+
+	// Assert no streaming errors
+	assert.NoError(t, streamErr, "failed to stream file")
 
 	// Ensure streaming has finished before test ends
 	<-done
