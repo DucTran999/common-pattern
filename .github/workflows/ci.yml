@@ -9,7 +9,7 @@ on:
 
 jobs:
   lint-check:
-    name: Golang Lint Check
+    name: golangci-lint-v2
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -24,7 +24,7 @@ jobs:
           args: --timeout 5m --config .golangci.yml
 
   test-coverage:
-    name: Code Coverage Report
+    name: codecov-report
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
