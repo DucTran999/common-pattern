@@ -38,7 +38,7 @@ case "$choice" in
     clear
     echo "======== APP: load balancing ========"
     echo "--------------------------------------"
-    go run $LOAD_BALANCE_PKG/round-robin/main.go
+    go run load-balancing/main.go --app-name=round-robin
     ;;
 0)
     echo "Goodbye!"

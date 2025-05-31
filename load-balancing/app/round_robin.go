@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"os"
@@ -8,7 +8,7 @@ import (
 	"github.com/rs/zerolog"
 )
 
-func main() {
+func RunRoundRobinApp() {
 	// Initialize zerolog with ConsoleWriter for pretty terminal output
 	logger := zerolog.New(os.Stderr).With().Timestamp().Logger()
 
