@@ -24,7 +24,7 @@ func Test_GeneratorProducesValues(t *testing.T) {
 				t.Fatalf("channel closed prematurely")
 			}
 
-			assert.True(t, nonce >= 0 && nonce < 27)
+			assert.True(t, nonce >= 0 && nonce < 26)
 
 			// Store nonce
 			values = append(values, nonce)

@@ -9,7 +9,7 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
-// Generator return a random number in range 0-26 and send it via channel
+// Generator return a random number in range 0-25 and send it via channel
 func Generator(ctx context.Context) chan int {
 	c := make(chan int, 10)
 

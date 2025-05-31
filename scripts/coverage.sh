@@ -33,11 +33,6 @@ echo "--------------------------------------------------------------------------
 
 total_coverage=$(go tool cover -func=test/coverage/coverage.out | grep total | awk '{print substr($3, 1, length($3)-1)}')
 coverage_threshold=80.0
-# Check if bc is available
-if ! command -v bc &> /dev/null; then
-  red "❌ 'bc' command not found. Please install bc for coverage threshold comparison."
-  exit 1
-fi
 
 comparison=$(awk "BEGIN {print ($total_coverage >= $coverage_threshold) ? 1 : 0}")
 if [ "$comparison" -eq 0 ]; then
