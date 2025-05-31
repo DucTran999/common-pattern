@@ -1,3 +1,5 @@
+//go:build ignore
+
 package main
 
 import (
@@ -18,6 +20,10 @@ func main() {
 	switch *appName {
 	case "worker-pool":
 		app.ReadCsvWithWorkerPool()
+	case "generator":
+		app.SecretConversationApp()
+	case "multiplexing":
+		app.GoNetSim()
 	default:
 		logger.Fatal().Msg("[ERROR] app not available")
 	}

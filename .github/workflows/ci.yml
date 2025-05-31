@@ -1,4 +1,4 @@
-name: CI
+name: continuous-integration
 
 on:
   push:
@@ -8,16 +8,40 @@ on:
     branches: ["master"]
 
 jobs:
-  Lint:
+  lint-check:
+    name: golangci-lint-v2
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-      - name: Setup go
+      - name: Setup Go
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
-      - name: Check lint
+      - name: Run GolangCI-Lint
         uses: golangci/golangci-lint-action@v8.0.0
         with:
-          args: --timeout 5m  --config .golangci.yml
+          args: --timeout 5m --config .golangci.yml
+
+  test-coverage:
+    name: codecov-report
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Install Task CLI
+        uses: arduino/setup-task@v2
+      - name: Install Dependencies
+        run: task deps
+      - name: Tidy Modules
+        run: task tidy
+      - name: Run Coverage Tests
+        run: task coverage
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}

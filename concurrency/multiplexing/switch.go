@@ -1,4 +1,4 @@
-package components
+package multiplexing
 
 import (
 	"log"
@@ -14,11 +14,12 @@ type Switch interface {
 }
 
 type switchDevice struct {
-	broadcast       BroadcastChan
-	switchUnicast   UnicastChan
-	routerUnicast   UnicastChan
-	unicastChannels []UnicastChan
-	arpCache        map[string]string
+	broadcast       BroadcastChan // Channel used to broadcast ARP requests from the router to all connected devices
+	switchUnicast   UnicastChan   // Channel used by devices to reply to the switch (e.g., sending their MAC address)
+	routerUnicast   UnicastChan   // Channel used by the switch to send MAC address responses back to the router
+	unicastChannels []UnicastChan // List of unicast channels to communicate with each connected device individually
+
+	arpCache map[string]string // ARP cache storing IP-to-MAC mappings discovered during communication
 }
 
 func NewSwitch(
