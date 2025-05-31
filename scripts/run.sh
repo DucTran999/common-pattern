@@ -6,6 +6,7 @@ LOAD_BALANCE_PKG=load-balancing
 
 show_menu() {
     echo "========== MENU =========="
+    echo "====== Concurrency ======="
     echo "1) worker pool"
     echo "2) generator"
     echo "3) multiplexing"
@@ -21,12 +22,12 @@ read -p "Choose an option: " choice
 case "$choice" in
 1)
     clear
-    echo "worker pool example:"
-    go run $CONCURRENCY_PKG/worker-pool/main.go
+    echo "======== APP: Concurrency ========="
+    go run $CONCURRENCY_PKG/main.go --app-name=worker-pool
     ;;
 2)
     clear
-    echo "generator example"
+    echo "======== APP: Concurrency ========="
     go run $CONCURRENCY_PKG/generator/main.go
     ;;
 3)
