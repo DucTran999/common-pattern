@@ -1,4 +1,4 @@
-package components
+package multiplexing
 
 import (
 	"log"
@@ -10,11 +10,12 @@ type Device interface {
 }
 
 type device struct {
-	name       string
-	ip         string
-	mac        string
-	unicast    UnicastChan
-	switchChan chan string
+	name string
+	ip   string
+	mac  string
+
+	unicast    UnicastChan // The channel device received message from switch
+	switchChan chan string // The channel device send ack message to switch
 }
 
 func NewDevice(name, ip, mac string, switchChan chan string) *device {

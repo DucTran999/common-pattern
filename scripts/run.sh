@@ -23,17 +23,20 @@ case "$choice" in
 1)
     clear
     echo "======== APP: Concurrency ========="
+    echo "=========== Worker Pool ==========="
     go run $CONCURRENCY_PKG/main.go --app-name=worker-pool
     ;;
 2)
     clear
     echo "======== APP: Concurrency ========="
+    echo "============ Generator ============"
     go run $CONCURRENCY_PKG/main.go --app-name=generator
     ;;
 3)
     clear
-    echo "multiplexing example"
-    go run $CONCURRENCY_PKG/multiplexing/main.go
+    echo "======== APP: Concurrency ========="
+    echo "======== Multiplexing ========="
+    go run $CONCURRENCY_PKG/main.go --app-name=multiplexing
     ;;
 4)
     clear

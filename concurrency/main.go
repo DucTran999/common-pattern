@@ -22,6 +22,8 @@ func main() {
 		app.ReadCsvWithWorkerPool()
 	case "generator":
 		app.SecretConversationApp()
+	case "multiplexing":
+		app.GoNetSim()
 	default:
 		logger.Fatal().Msg("[ERROR] app not available")
 	}

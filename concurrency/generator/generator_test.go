@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func Test_GeneratorProducesValues(t *testing.T) {
@@ -32,5 +33,5 @@ func Test_GeneratorProducesValues(t *testing.T) {
 		}
 	}
 
-	assert.True(t, len(values) > 0)
+	require.NotEmpty(t, values)
 }
