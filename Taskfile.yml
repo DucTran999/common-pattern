@@ -16,3 +16,18 @@ tasks:
       - golangci-lint run --timeout 5m --config .golangci.yml
       - scripts/run.sh
     silent: true
+
+  tidy:
+    desc: install pkg listed in go.mod
+    cmds:
+      -  go mod tidy
+
+  coverage: 
+    desc: run unit test and force coverage > 80%
+    cmds:
+      - ./scripts/coverage.sh
+
+  deps:
+    desc: install dependencies
+    cmds:
+      - go install github.com/vektra/mockery/v2@v2.46.3

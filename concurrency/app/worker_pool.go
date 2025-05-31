@@ -11,7 +11,7 @@ import (
 func ReadCsvWithWorkerPool() {
 	s := time.Now()
 
-	path, err := utils.BuildFilePath("concurrency/worker-pool/mock_data.csv")
+	path, err := utils.BuildFilePath("test/data_test/mock_data.csv")
 	if err != nil {
 		log.Fatalln("failed to lookup file path", err)
 	}
