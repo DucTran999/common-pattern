@@ -1,16 +1,13 @@
 package app
 
 import (
-	"os"
 	"patterns/load-balancing/components"
 	loadbalancer "patterns/load-balancing/load_balancer"
 
 	"github.com/rs/zerolog"
 )
 
-func RunRoundRobinApp() {
-	// Initialize zerolog with ConsoleWriter for pretty terminal output
-	logger := zerolog.New(os.Stderr).With().Timestamp().Logger()
+func RunRoundRobinApp(logger zerolog.Logger) {
 
 	// Initialize the backend builder and configure number of backend servers
 	backendBuilder := components.NewBackendBuilder(logger)

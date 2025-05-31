@@ -2,18 +2,24 @@ package main
 
 import (
 	"flag"
-	"log"
+	"os"
+
 	"patterns/load-balancing/app"
+
+	"github.com/rs/zerolog"
 )
 
 func main() {
+	// Initialize zerolog with ConsoleWriter for pretty terminal output
+	logger := zerolog.New(os.Stderr).With().Timestamp().Logger()
+
 	appName := flag.String("app-name", "round-robin", "Load balance app to run")
 	flag.Parse()
 
 	switch *appName {
 	case "round-robin":
-		app.RunRoundRobinApp()
+		app.RunRoundRobinApp(logger)
 	default:
-		log.Println("[ERROR] app not available")
+		logger.Fatal().Msg("[ERROR] app not available")
 	}
 }
