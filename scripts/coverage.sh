@@ -18,10 +18,15 @@ echo "--------------------------------------------------------------------------
 COV_PATH=test/coverage
 
 mkdir -p $COV_PATH
-if ! go test -cover $(go list ./concurrency/... | grep -v /app) -coverprofile=$COV_PATH/coverage.out; then
-  red "❌ Tests failed. Cannot generate coverage report."
+# Find all packages excluding `/app`
+PKGS=$(go list ./concurrency/... ./dsa/... | grep -v '/app')
+
+# Run tests with coverage
+if ! go test -cover $PKGS -coverprofile="$COV_PATH/coverage.out"; then
+  echo -e "\033[0;31m❌ Tests failed. Cannot generate coverage report.\033[0m"
   exit 1
 fi
+
 
 if [ ! -f "test/coverage/coverage.out" ]; then
   red "❌ Coverage profile not generated."

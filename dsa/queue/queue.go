@@ -1,11 +1,11 @@
-package main
+package queue
 
 import (
 	"errors"
-	"fmt"
-	"log"
 	"sync"
 )
+
+var ErrQueueEmpty = errors.New("queue empty")
 
 type Queue interface {
 	Len() int
@@ -42,27 +42,11 @@ func (q *queue) Dequeue() (int, error) {
 	q.mutex.Lock()
 	defer q.mutex.Unlock()
 	if len(q.list) == 0 {
-		return 0, errors.New("queue is empty")
+		return 0, ErrQueueEmpty
 	}
 
 	val := q.list[0]
 	q.list = q.list[1:]
 
 	return val, nil
-}
-
-func main() {
-	q := NewQueue(10)
-	q.Enqueue(2)
-	fmt.Println("enqueue:", 2)
-	q.Enqueue(4)
-	fmt.Println("enqueue:", 4)
-
-	val, err := q.Dequeue()
-	if err != nil {
-		log.Println("failed to dequeue:", err)
-	}
-	fmt.Println("dequeue:", val)
-
-	fmt.Println("queue len:", q.Len())
 }
