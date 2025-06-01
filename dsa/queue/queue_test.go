@@ -28,6 +28,6 @@ func Test_Queue(t *testing.T) {
 	assert.Equal(t, 0, q.Len(), "Expected queue length to be 1 after one dequeue")
 
 	// queue empty should return error
-	val, err = q.Dequeue()
+	_, err = q.Dequeue()
 	assert.ErrorIs(t, err, queue.ErrQueueEmpty)
 }
