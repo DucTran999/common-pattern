@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"patterns/concurrency/multiplexing"
 	"syscall"
+	"time"
 )
 
 // initRouter initializes the router with IPs, broadcast, and listen channels.
@@ -18,7 +19,7 @@ func initRouter(broadcast chan string, routerListen multiplexing.UnicastChan) (m
 		"192.186.1.17",
 	}
 
-	return multiplexing.NewRouter(ips, broadcast, routerListen)
+	return multiplexing.NewRouter(ips, broadcast, routerListen, time.Second)
 }
 
 // GoNetSim is a Go-based network simulator that demonstrates how a router discovers devices in a LAN using IP addresses.

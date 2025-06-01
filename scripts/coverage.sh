@@ -18,7 +18,7 @@ echo "--------------------------------------------------------------------------
 COV_PATH=test/coverage
 
 mkdir -p $COV_PATH
-if ! go test -cover $(go list ./concurrency/... | grep -v /app) -coverprofile=$COV_PATH/coverage.out; then
+if ! go test -cover $(go list ./concurrency/... ./dsa/... | grep -v /app) -coverprofile=$COV_PATH/coverage.out; then
   red "❌ Tests failed. Cannot generate coverage report."
   exit 1
 fi

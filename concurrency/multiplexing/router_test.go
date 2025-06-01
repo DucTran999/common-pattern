@@ -12,7 +12,7 @@ func Test_NewRouter_MissingBroadcast(t *testing.T) {
 	listen := make(chan string)
 	ipList := []string{"192.168.1.10"}
 
-	router, err := multiplexing.NewRouter(ipList, nil, listen)
+	router, err := multiplexing.NewRouter(ipList, nil, listen, 0)
 
 	require.ErrorIs(t, multiplexing.ErrMissingBroadcastChannel, err)
 	assert.Nil(t, router)
@@ -21,7 +21,7 @@ func Test_NewRouter_MissingBroadcast(t *testing.T) {
 func Test_NewRouter_MissingIpList(t *testing.T) {
 	listen := make(chan string)
 	broadcast := make(chan string)
-	router, err := multiplexing.NewRouter([]string{}, broadcast, listen)
+	router, err := multiplexing.NewRouter([]string{}, broadcast, listen, 0)
 
 	require.ErrorIs(t, multiplexing.ErrEmptyIPList, err)
 	assert.Nil(t, router)
@@ -32,7 +32,7 @@ func Test_SendArp_FoundMAC(t *testing.T) {
 	broadcast := make(chan string)
 	ipList := []string{"192.168.1.10", "192.168.1.1"}
 
-	router, err := multiplexing.NewRouter(ipList, broadcast, listen)
+	router, err := multiplexing.NewRouter(ipList, broadcast, listen, 0)
 	require.NoError(t, err)
 
 	go router.SendArp()

@@ -13,27 +13,35 @@ type router struct {
 	ipList     []string
 	broadcast  BroadcastChan
 	listenChan UnicastChan
+	jitter     time.Duration
 }
 
-func NewRouter(ipList []string, broadcast BroadcastChan, listenChan UnicastChan) (*router, error) {
+func NewRouter(
+	ipList []string, broadcast BroadcastChan,
+	listenChan UnicastChan, jitter time.Duration,
+) (*router, error) {
 	if len(ipList) == 0 {
 		return nil, ErrEmptyIPList
 	}
 	if broadcast == nil {
 		return nil, ErrMissingBroadcastChannel
 	}
+	if jitter == 0 {
+		jitter = time.Millisecond * 100
+	}
 
 	return &router{
 		ipList:     ipList,
 		broadcast:  broadcast,
 		listenChan: listenChan,
+		jitter:     jitter,
 	}, nil
 }
 
 func (r *router) SendArp() {
 	for _, ip := range r.ipList {
 		// Send ip want to ask to broadcast channel
-		time.Sleep(time.Second)
+		time.Sleep(r.jitter)
 		log.Printf("Router: I want to ask IP [%s]", ip)
 		r.broadcast <- ip
 
