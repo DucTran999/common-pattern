@@ -4,6 +4,7 @@ A personal collection of patterns, concurrency models, and load balancing techni
 [![Go Report Card](https://goreportcard.com/badge/github.com/DucTran999/common-pattern)](https://goreportcard.com/report/github.com/DucTran999/common-pattern)
 [![Go](https://img.shields.io/badge/Go-1.23-blue?logo=go)](https://golang.org)
 [![codecov](https://codecov.io/gh/DucTran999/common-pattern/graph/badge.svg?token=5XBMMBKCPD)](https://codecov.io/gh/DucTran999/common-pattern)
+[![Known Vulnerabilities](https://snyk.io/test/github/ductran999/common-pattern/badge.svg)](https://snyk.io/test/github/ductran999/common-pattern)
 [![License](https://img.shields.io/github/license/DucTran999/common-pattern)](LICENSE)
 ![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/DucTran999/common-pattern?utm_source=oss&utm_medium=github&utm_campaign=DucTran999%2Fcommon-pattern&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
 
