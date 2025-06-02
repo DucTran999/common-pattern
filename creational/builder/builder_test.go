@@ -32,4 +32,17 @@ func Test_HouseBuilder(t *testing.T) {
 		require.Equal(t, 0, house.Doors, "Doors should be 0 (default)")
 		require.False(t, house.Garage, "Garage should be false (default)")
 	})
+
+	t.Run("DefaultHouse", func(t *testing.T) {
+		house := builder.NewHouseBuilder().
+			SetWalls("wood").
+			SetDoors(-1).
+			SetWindows(-1).
+			Build()
+
+		require.Equal(t, "wood", house.Walls, "Walls should be 'wood'")
+		require.Equal(t, 0, house.Windows, "Windows should be 0 (default)")
+		require.Equal(t, 0, house.Doors, "Doors should be 0 (default)")
+		require.False(t, house.Garage, "Garage should be false (default)")
+	})
 }

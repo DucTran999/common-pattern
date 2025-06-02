@@ -26,12 +26,20 @@ func (b *houseBuilder) SetWalls(walls string) *houseBuilder {
 
 // SetDoors sets the number of doors
 func (b *houseBuilder) SetDoors(doors int) *houseBuilder {
+	if doors < 0 {
+		doors = 0
+	}
+
 	b.house.Doors = doors
 	return b
 }
 
 // SetWindows sets the number of windows
 func (b *houseBuilder) SetWindows(windows int) *houseBuilder {
+	if windows < 0 {
+		windows = 0
+	}
+
 	b.house.Windows = windows
 	return b
 }
