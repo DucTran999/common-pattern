@@ -39,7 +39,7 @@ func Test_PhysicalFactory(t *testing.T) {
 			expectedErr: factorymethod.ErrInvalidProductWeight,
 		},
 		{
-			testName:     "invalid weight",
+			testName:     "valid product",
 			name:         "product A",
 			price:        2,
 			weight:       "2.6",
@@ -90,14 +90,14 @@ func Test_DigitalFactory(t *testing.T) {
 			expectedErr: factorymethod.ErrInvalidProductPrice,
 		},
 		{
-			testName:     "invalid weight",
+			testName:     "invalid download link",
 			name:         "product A",
 			price:        2,
 			downloadLink: "",
 			expectedErr:  factorymethod.ErrInvalidProductLink,
 		},
 		{
-			testName:     "invalid weight",
+			testName:     "valid product",
 			name:         "product A",
 			price:        2,
 			downloadLink: "url",
