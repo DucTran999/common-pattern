@@ -28,12 +28,12 @@ type notificationManager struct {
 	notifierMap map[ChanelStrategy]Notifier
 }
 
-func NewNotificationManager() (*notificationManager, error) {
+func NewNotificationManager() *notificationManager {
 	nm := &notificationManager{
 		notifierMap: make(map[ChanelStrategy]Notifier),
 	}
 
-	return nm, nil
+	return nm
 }
 
 func (nm *notificationManager) RegisterNotifier(strategy ChanelStrategy, notifier Notifier) {

@@ -27,10 +27,7 @@ func TestChanelStrategyString(t *testing.T) {
 
 func Test_NotificationManager(t *testing.T) {
 	// Initialize the notification manager
-	nm, err := strategy.NewNotificationManager()
-	if err != nil {
-		t.Fatalf("Failed to create notification manager: %v", err)
-	}
+	nm := strategy.NewNotificationManager()
 
 	smsStrategy, err := strategy.NewSMSStrategy("sms.example.com", "+1234567890")
 	if err != nil {
