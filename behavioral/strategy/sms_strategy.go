@@ -31,7 +31,7 @@ func NewSMSStrategy(gateway, sender string) (*smsStrategy, error) {
 	}, nil
 }
 
-func (s *smsStrategy) SendNotification(to, message string) error {
+func (s *smsStrategy) Send(to, message string) error {
 	if strings.TrimSpace(to) == "" || !strings.HasPrefix(to, "+") {
 		return ErrInvalidPhoneNumber
 	}

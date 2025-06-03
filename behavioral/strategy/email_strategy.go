@@ -40,7 +40,7 @@ func NewEmailStrategy(host string, port int, sender string) (*emailStrategy, err
 	}, nil
 }
 
-func (e *emailStrategy) SendNotification(to, message string) error {
+func (e *emailStrategy) Send(to, message string) error {
 	if strings.Trim(to, " ") == "" || !strings.Contains(to, "@") {
 		return ErrInvalidRecipient
 	}

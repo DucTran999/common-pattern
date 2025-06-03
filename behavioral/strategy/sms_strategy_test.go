@@ -86,7 +86,7 @@ func Test_SmsStrategy_SendNotification(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			err := smsStrategy.SendNotification(tc.to, tc.message)
+			err := smsStrategy.Send(tc.to, tc.message)
 
 			require.ErrorIs(t, err, tc.expectError)
 		})
