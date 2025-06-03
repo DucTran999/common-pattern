@@ -2,14 +2,14 @@ package strategy
 
 import "fmt"
 
-type ChanelStrategy int
+type ChannelStrategy int
 
 const (
-	EmailStrategy ChanelStrategy = iota
+	EmailStrategy ChannelStrategy = iota
 	SMSStrategy
 )
 
-func (c ChanelStrategy) String() string {
+func (c ChannelStrategy) String() string {
 	switch c {
 	case EmailStrategy:
 		return "Email"
@@ -25,22 +25,20 @@ type Notifier interface {
 }
 
 type notificationManager struct {
-	notifierMap map[ChanelStrategy]Notifier
+	notifierMap map[ChannelStrategy]Notifier
 }
 
 func NewNotificationManager() *notificationManager {
-	nm := &notificationManager{
-		notifierMap: make(map[ChanelStrategy]Notifier),
+	return &notificationManager{
+		notifierMap: make(map[ChannelStrategy]Notifier),
 	}
-
-	return nm
 }
 
-func (nm *notificationManager) RegisterNotifier(strategy ChanelStrategy, notifier Notifier) {
+func (nm *notificationManager) RegisterNotifier(strategy ChannelStrategy, notifier Notifier) {
 	nm.notifierMap[strategy] = notifier
 }
 
-func (nm *notificationManager) SendNotification(channel ChanelStrategy, to, message string) error {
+func (nm *notificationManager) SendNotification(channel ChannelStrategy, to, message string) error {
 	notifier, ok := nm.notifierMap[channel]
 	if !ok {
 		return fmt.Errorf("unsupported notification channel: %d", channel)
