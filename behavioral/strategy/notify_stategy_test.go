@@ -10,7 +10,7 @@ import (
 
 func TestChanelStrategyString(t *testing.T) {
 	tests := []struct {
-		strategy strategy.ChanelStrategy
+		strategy strategy.ChannelStrategy
 		expected string
 	}{
 		{0, "Email"},
