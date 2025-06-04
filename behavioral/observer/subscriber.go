@@ -1,8 +1,14 @@
 package observer
 
+import (
+	"slices"
+	"sync"
+)
+
 type subscriber struct {
 	name string
 	news []string
+	mu   sync.RWMutex
 }
 
 func NewSubscriber(name string) *subscriber {
@@ -10,10 +16,13 @@ func NewSubscriber(name string) *subscriber {
 }
 
 func (s *subscriber) UpdateNews(news string) {
-	println(s.name + " received news: " + news)
+	s.mu.Lock()
+	defer s.mu.Unlock()
 	s.news = append(s.news, news)
 }
 
 func (s *subscriber) GetNews() []string {
-	return s.news
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	return slices.Clone(s.news) // Return a copy of the news slice
 }

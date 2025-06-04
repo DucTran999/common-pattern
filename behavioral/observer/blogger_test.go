@@ -8,7 +8,7 @@ import (
 )
 
 func Test_Subscriber(t *testing.T) {
-	blogs := &observer.Blogs{}
+	blogs := observer.NewBlogs()
 
 	alice := observer.NewSubscriber("Alice")
 	bob := observer.NewSubscriber("Bob")
