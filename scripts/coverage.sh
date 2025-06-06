@@ -27,7 +27,6 @@ if ! go test -cover $PKGS -coverprofile="$COV_PATH/coverage.out"; then
   exit 1
 fi
 
-
 if [ ! -f "test/coverage/coverage.out" ]; then
   red "❌ Coverage profile not generated."
   exit 1
