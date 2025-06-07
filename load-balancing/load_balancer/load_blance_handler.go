@@ -54,8 +54,7 @@ func (h *loadBalanceHandler) getAlgorithmImpl(alg Algorithm) (AlgorithmImplement
 	case RoundRobin:
 		return NewRoundRobinAlg(h.targets)
 	case WeightedRoundRobin:
-		//  not implemented yet
-		return nil, ErrUnsupportedAlg
+		return NewWeightedRoundRobinAlg(h.targets)
 	default:
 		return nil, ErrUnsupportedAlg
 	}

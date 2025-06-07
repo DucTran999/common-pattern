@@ -7,10 +7,11 @@ import (
 	"github.com/rs/zerolog"
 )
 
-func RunRoundRobinApp(logger zerolog.Logger) {
+func RunWeightRoundRobinApp(logger zerolog.Logger) {
 	// Initialize the backend builder and configure number of backend servers
 	backendBuilder := components.NewBackendBuilder(logger)
-	backendBuilder.SetNumberOfBackends(5)
+	backendBuilder.SetNumberOfBackends(3)
+	backendBuilder.EnableRandomWeight() // Enable random weight for backends
 
 	// Build the backend servers
 	backends, err := backendBuilder.Build()
@@ -19,7 +20,7 @@ func RunRoundRobinApp(logger zerolog.Logger) {
 	}
 
 	// Create a new load balancer on localhost:8080 using the backends and round-robin algorithm
-	lb, err := loadbalancer.NewLoadBalancer("localhost", 8080, backends, loadbalancer.RoundRobin)
+	lb, err := loadbalancer.NewLoadBalancer("localhost", 8080, backends, loadbalancer.WeightedRoundRobin)
 	if err != nil {
 		logger.Fatal().Msgf("failed to init loadbalancer: %v", err)
 	}
