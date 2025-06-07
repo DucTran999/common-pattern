@@ -1,7 +1,6 @@
 package loadbalancer
 
 import (
-	"log"
 	"net/url"
 	"patterns/utils"
 	"sort"
@@ -30,7 +29,6 @@ func NewWeightedRoundRobinAlg(targets []*utils.SimpleHTTPServer) (*weightedRound
 	}
 
 	wrr.sortBackendsByWeight()
-	log.Println(wrr.backends)
 
 	return wrr, nil
 }
