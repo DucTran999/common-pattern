@@ -19,7 +19,7 @@ func RunWeightRoundRobinApp(logger zerolog.Logger) {
 		logger.Fatal().Msgf("failed when build backends: %v", err)
 	}
 
-	// Create a new load balancer on localhost:8080 using the backends and round-robin algorithm
+	// Create a new load balancer on localhost:8080 using the backends and  weight round-robin algorithm
 	lb, err := loadbalancer.NewLoadBalancer("localhost", 8080, backends, loadbalancer.WeightedRoundRobin)
 	if err != nil {
 		logger.Fatal().Msgf("failed to init loadbalancer: %v", err)

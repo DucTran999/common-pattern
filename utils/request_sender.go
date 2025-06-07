@@ -2,12 +2,9 @@ package utils
 
 import (
 	"log"
-	"net"
 	"net/http"
 	"sync"
 	"time"
-
-	"github.com/bxcodec/faker"
 )
 
 type RequestSender interface {
@@ -56,12 +53,13 @@ func (r *requestSender) Start(fn DoRequestCallback) {
 func (r *requestSender) sendParallel(fn DoRequestCallback) {
 	wg := sync.WaitGroup{}
 
+	c := http.Client{Timeout: 10 * time.Second}
+
 	for i := range r.config.NumOfRequest {
-		c := newHTTPClientWithSourceIP(faker.IPV4)
 		wg.Add(1)
 		go func(idx int) {
 			defer wg.Done()
-			fn(*c, idx)
+			fn(c, idx)
 		}(i)
 
 		// Wait a while before send new request
@@ -72,7 +70,7 @@ func (r *requestSender) sendParallel(fn DoRequestCallback) {
 }
 
 func (r *requestSender) sendSequential(fn DoRequestCallback) {
-	c := http.Client{}
+	c := http.Client{Timeout: 10 * time.Second}
 
 	for i := range r.config.NumOfRequest {
 		fn(c, i)
@@ -90,28 +88,5 @@ func (r *requestSender) applyConfig() {
 
 	if r.config.Jitter == 0 {
 		r.config.Jitter = time.Second
-	}
-}
-
-func newHTTPClientWithSourceIP(sourceIP string) *http.Client {
-	dialer := &net.Dialer{
-		LocalAddr: &net.TCPAddr{
-			IP: net.ParseIP(sourceIP),
-		},
-		Timeout:   10 * time.Second,
-		KeepAlive: 10 * time.Second,
-	}
-
-	transport := &http.Transport{
-		DialContext:         dialer.DialContext,
-		DisableKeepAlives:   false,
-		MaxIdleConns:        100,
-		IdleConnTimeout:     90 * time.Second,
-		TLSHandshakeTimeout: 10 * time.Second,
-	}
-
-	return &http.Client{
-		Transport: transport,
-		Timeout:   15 * time.Second,
 	}
 }

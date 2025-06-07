@@ -26,7 +26,7 @@ func RunRoundRobinApp(logger zerolog.Logger) {
 
 	// Start the load balancer asynchronously
 	if err := lb.Start(); err != nil {
-		logger.Error().Msgf("failed to start load balancer: %v", err)
+		logger.Fatal().Msgf("failed to start load balancer: %v", err)
 	}
 
 	// Initialize a request sender component and start sending requests asynchronously

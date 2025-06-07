@@ -18,7 +18,7 @@ func RunSourceIPhashApp(logger zerolog.Logger) {
 		logger.Fatal().Msgf("failed when build backends: %v", err)
 	}
 
-	// Create a new load balancer on localhost:8080 using the backends and round-robin algorithm
+	// Create a new load balancer on localhost:8080 using the backends and source ip algorithm
 	lb, err := loadbalancer.NewLoadBalancer("localhost", 8080, backends, loadbalancer.SourceIPHash)
 	if err != nil {
 		logger.Fatal().Msgf("failed to init loadbalancer: %v", err)
@@ -26,7 +26,7 @@ func RunSourceIPhashApp(logger zerolog.Logger) {
 
 	// Start the load balancer asynchronously
 	if err := lb.Start(); err != nil {
-		logger.Error().Msgf("failed to start load balancer: %v", err)
+		logger.Fatal().Msgf("failed to start load balancer: %v", err)
 	}
 
 	// Initialize a request sender component and start sending requests asynchronously

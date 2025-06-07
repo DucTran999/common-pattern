@@ -7,6 +7,7 @@ import (
 	"patterns/utils"
 	"time"
 
+	"github.com/go-faker/faker/v4"
 	"github.com/rs/zerolog/log"
 )
 
@@ -34,7 +35,16 @@ func (r *requestSender) SendNow() {
 // It closes the response body and handles errors appropriately.
 func (r *requestSender) sendRequest(c http.Client, reqID int) {
 	endpoint := fmt.Sprintf("http://localhost:8080/req/%d", reqID)
-	resp, err := c.Get(endpoint)
+	req, err := http.NewRequest("GET", endpoint, nil)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to make new request")
+		return
+	}
+
+	// Inject fake IP into common headers
+	req.Header.Set("X-Forwarded-For", faker.IPv4())
+
+	resp, err := c.Do(req)
 	if err != nil {
 		log.Error().
 			Int("request_id", reqID).
