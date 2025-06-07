@@ -21,6 +21,8 @@ func main() {
 		app.RunRoundRobinApp(logger)
 	case "wrr":
 		app.RunWeightRoundRobinApp(logger)
+	case "sih":
+		app.RunSourceIPhashApp(logger)
 	default:
 		logger.Fatal().Msg("[ERROR] app not available")
 	}
