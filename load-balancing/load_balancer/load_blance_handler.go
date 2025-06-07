@@ -1,15 +1,12 @@
 package loadbalancer
 
 import (
-	"log"
 	"net/http"
-	"net/http/httputil"
-	"net/url"
 	"patterns/utils"
 )
 
 type AlgorithmImplementer interface {
-	GetNextBackend() url.URL
+	ForwardRequest(w http.ResponseWriter, r *http.Request)
 }
 
 type loadBalanceHandler struct {
@@ -38,15 +35,7 @@ func NewLoadBalancerHandler(
 }
 
 func (lb *loadBalanceHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	nextUrl := lb.algorithmImpl.GetNextBackend()
-	log.Printf("[INFO] load balancer forwarding request to: %v\n", nextUrl.String())
-
-	proxy := lb.getOrCreateProxy(&nextUrl)
-	proxy.ServeHTTP(w, r)
-}
-
-func (lb *loadBalanceHandler) getOrCreateProxy(target *url.URL) *httputil.ReverseProxy {
-	return httputil.NewSingleHostReverseProxy(target)
+	lb.algorithmImpl.ForwardRequest(w, r)
 }
 
 func (h *loadBalanceHandler) getAlgorithmImpl(alg Algorithm) (AlgorithmImplementer, error) {
@@ -55,6 +44,8 @@ func (h *loadBalanceHandler) getAlgorithmImpl(alg Algorithm) (AlgorithmImplement
 		return NewRoundRobinAlg(h.targets)
 	case WeightedRoundRobin:
 		return NewWeightedRoundRobinAlg(h.targets)
+	case SourceIPHash:
+		return NewSourceIPHashAlgorithm(h.targets)
 	default:
 		return nil, ErrUnsupportedAlg
 	}

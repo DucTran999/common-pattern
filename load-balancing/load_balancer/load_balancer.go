@@ -5,6 +5,7 @@ import (
 	"net"
 	"net/http"
 	"patterns/utils"
+	"strconv"
 	"time"
 
 	"github.com/rs/zerolog/log"
@@ -18,6 +19,8 @@ func (a Algorithm) String() string {
 		return "Round Robin"
 	case WeightedRoundRobin:
 		return "Weighted Round Robin"
+	case SourceIPHash:
+		return "Source IP Hash"
 	default:
 		return ""
 	}
@@ -26,6 +29,7 @@ func (a Algorithm) String() string {
 const (
 	RoundRobin Algorithm = iota
 	WeightedRoundRobin
+	SourceIPHash
 )
 
 type LoadBalancer interface {
@@ -51,7 +55,7 @@ func NewLoadBalancer(
 		host: host,
 		port: port,
 		server: &http.Server{
-			Addr:         fmt.Sprintf("%s:%d", host, port),
+			Addr:         net.JoinHostPort(host, strconv.Itoa(port)),
 			Handler:      hdl,
 			ReadTimeout:  10 * time.Second,
 			WriteTimeout: 10 * time.Second,

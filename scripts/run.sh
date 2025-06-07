@@ -11,8 +11,9 @@ show_menu() {
     echo "2) generator"
     echo "3) multiplexing"
     echo "===== Load balancing ====="
-    echo "4) load balance alg: round-robin"
-    echo "5) load balance alg: weight-round-robin"
+    echo "4) alg: round-robin"
+    echo "5) alg: weight-round-robin"
+    echo "6) alg: source-ip-hash"
     echo "0) Exit"
     echo "=========================="
 }
@@ -50,6 +51,12 @@ case "$choice" in
     echo "======== APP: load balancing ========"
     echo "--------------------------------------"
     go run load-balancing/main.go --app-name=wrr
+    ;;
+6)
+    clear
+    echo "======== APP: load balancing ========"
+    echo "--------------------------------------"
+    go run load-balancing/main.go --app-name=sih
     ;;
 0)
     echo "Goodbye!"

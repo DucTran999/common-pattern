@@ -7,11 +7,10 @@ import (
 	"github.com/rs/zerolog"
 )
 
-func RunWeightRoundRobinApp(logger zerolog.Logger) {
+func RunSourceIPhashApp(logger zerolog.Logger) {
 	// Initialize the backend builder and configure number of backend servers
 	backendBuilder := components.NewBackendBuilder(logger)
-	backendBuilder.SetNumberOfBackends(3)
-	backendBuilder.EnableRandomWeight() // Enable random weight for backends
+	backendBuilder.SetNumberOfBackends(5)
 
 	// Build the backend servers
 	backends, err := backendBuilder.Build()
@@ -19,8 +18,8 @@ func RunWeightRoundRobinApp(logger zerolog.Logger) {
 		logger.Fatal().Msgf("failed when build backends: %v", err)
 	}
 
-	// Create a new load balancer on localhost:8080 using the backends and  weight round-robin algorithm
-	lb, err := loadbalancer.NewLoadBalancer("localhost", 8080, backends, loadbalancer.WeightedRoundRobin)
+	// Create a new load balancer on localhost:8080 using the backends and source ip algorithm
+	lb, err := loadbalancer.NewLoadBalancer("localhost", 8080, backends, loadbalancer.SourceIPHash)
 	if err != nil {
 		logger.Fatal().Msgf("failed to init loadbalancer: %v", err)
 	}

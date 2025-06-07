@@ -51,8 +51,9 @@ func (r *requestSender) Start(fn DoRequestCallback) {
 }
 
 func (r *requestSender) sendParallel(fn DoRequestCallback) {
-	c := http.Client{}
 	wg := sync.WaitGroup{}
+
+	c := http.Client{Timeout: 10 * time.Second}
 
 	for i := range r.config.NumOfRequest {
 		wg.Add(1)
@@ -69,7 +70,7 @@ func (r *requestSender) sendParallel(fn DoRequestCallback) {
 }
 
 func (r *requestSender) sendSequential(fn DoRequestCallback) {
-	c := http.Client{}
+	c := http.Client{Timeout: 10 * time.Second}
 
 	for i := range r.config.NumOfRequest {
 		fn(c, i)
