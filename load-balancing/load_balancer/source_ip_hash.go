@@ -11,7 +11,6 @@ import (
 
 type sourceIPHash struct {
 	backends []*utils.SimpleHTTPServer
-	ipHash   []*url.URL
 }
 
 func NewSourceIPHashAlgorithm(targets []*utils.SimpleHTTPServer) (*sourceIPHash, error) {
@@ -27,7 +26,6 @@ func NewSourceIPHashAlgorithm(targets []*utils.SimpleHTTPServer) (*sourceIPHash,
 	}
 
 	sih := &sourceIPHash{backends: targets}
-	sih.addBackendToIPHash()
 
 	return sih, nil
 }
@@ -63,15 +61,9 @@ func (lb *sourceIPHash) getClientIP(r *http.Request) string {
 	return host
 }
 
-func (lb *sourceIPHash) addBackendToIPHash() {
-	for _, backend := range lb.backends {
-		lb.ipHash = append(lb.ipHash, backend.GetUrl())
-	}
-}
-
 func (lb *sourceIPHash) getNextBackend(sourceIP string) url.URL {
 	idx := lb.simpleHash(sourceIP, len(lb.backends))
-	return *lb.ipHash[idx]
+	return *lb.backends[idx].GetUrl()
 }
 
 func (lb *sourceIPHash) simpleHash(s string, buckets int) int {
