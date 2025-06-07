@@ -16,12 +16,14 @@ import (
 
 const (
 	DefaultNumberBackends = 3
+	DefaultBackendWeight  = 2
 )
 
 type backendBuilder struct {
 	numOfBackends int
 	backends      []*utils.SimpleHTTPServer
 	logger        zerolog.Logger
+	randomWeight  bool
 }
 
 func NewBackendBuilder(logger zerolog.Logger) *backendBuilder {
@@ -41,6 +43,11 @@ func (b *backendBuilder) SetNumberOfBackends(num int) {
 			Int("numberOfBackends", num).
 			Msg("invalid number of backends, using default")
 	}
+}
+
+func (b *backendBuilder) EnableRandomWeight() {
+	b.randomWeight = true
+	b.logger.Info().Msg("random weight enabled for backends")
 }
 
 func (b *backendBuilder) Build() ([]*utils.SimpleHTTPServer, error) {
@@ -89,7 +96,7 @@ func (b *backendBuilder) setupBackend(id int) (*utils.SimpleHTTPServer, error) {
 			continue
 		}
 
-		be := utils.NewSimpleHTTPServer("localhost", port, id, 2)
+		be := utils.NewSimpleHTTPServer("localhost", port, id, b.createBackendWeight())
 		errChan := make(chan error, 1)
 
 		go func() {
@@ -157,4 +164,11 @@ func (b *backendBuilder) isPortAvailable(host string, port int) bool {
 // random port in 49152–65535
 func (b *backendBuilder) getRandomPort() int {
 	return rand.IntN(65535-49152+1) + 49152 //nolint:gosec
+}
+
+func (b *backendBuilder) createBackendWeight() int {
+	if b.randomWeight {
+		return rand.IntN(5) + 1 //nolint:gosec
+	}
+	return DefaultBackendWeight
 }

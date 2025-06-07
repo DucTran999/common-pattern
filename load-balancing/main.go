@@ -19,6 +19,8 @@ func main() {
 	switch *appName {
 	case "round-robin":
 		app.RunRoundRobinApp(logger)
+	case "wrr":
+		app.RunWeightRoundRobinApp(logger)
 	default:
 		logger.Fatal().Msg("[ERROR] app not available")
 	}
