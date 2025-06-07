@@ -1,6 +1,7 @@
 package loadbalancer
 
 import (
+	"hash/fnv"
 	"log"
 	"net"
 	"net/http"
@@ -56,6 +57,7 @@ func (lb *sourceIPHash) getClientIP(r *http.Request) string {
 	host, _, err := net.SplitHostPort(r.RemoteAddr)
 	if err != nil {
 		log.Printf("[ERROR] failed to get client ip")
+		host = r.RemoteAddr // keep real IP
 	}
 
 	return host
@@ -67,11 +69,10 @@ func (lb *sourceIPHash) getNextBackend(sourceIP string) url.URL {
 }
 
 func (lb *sourceIPHash) simpleHash(s string, buckets int) int {
-	hash := 0
-	for _, char := range s {
-		hash += int(char) // Add ASCII value (or rune value for Unicode)
-	}
-	return hash % buckets // Modulus to fit bucket range
+	h := fnv.New32a()
+	h.Write([]byte(s)) //nolint:gosec
+
+	return int(h.Sum32()) % buckets
 }
 
 func (lb *sourceIPHash) getOrCreateProxy(target *url.URL) *httputil.ReverseProxy {
