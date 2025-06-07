@@ -4,6 +4,7 @@ go 1.23.1
 
 require (
 	github.com/DucTran999/shared-pkg v0.0.0-20250523033839-7cc82356af6d
+	github.com/bxcodec/faker v2.0.1+incompatible
 	github.com/gorilla/mux v1.8.1
 	github.com/labstack/gommon v0.4.2
 	github.com/rs/zerolog v1.34.0

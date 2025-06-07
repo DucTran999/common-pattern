@@ -1,5 +1,7 @@
 github.com/DucTran999/shared-pkg v0.0.0-20250523033839-7cc82356af6d h1:3Ozi0Y7Tq688CBC1H1BH1UZfJ9xhbQLq6/mxjFjFmRc=
 github.com/DucTran999/shared-pkg v0.0.0-20250523033839-7cc82356af6d/go.mod h1:QkOH0IVB5QIL3N8fwVj0tnJOVOlFakJBQZQ8m3yzf0E=
+github.com/bxcodec/faker v2.0.1+incompatible h1:P0KUpUw5w6WJXwrPfv35oc91i4d8nf40Nwln+M/+faA=
+github.com/bxcodec/faker v2.0.1+incompatible/go.mod h1:BNzfpVdTwnFJ6GtfYTcQu6l6rHShT+veBxNCnjCx5XM=
 github.com/coreos/go-systemd/v22 v22.5.0/go.mod h1:Y58oyj3AT4RCenI/lSvhwexgC+NSVTIJ3seZv2GcEnc=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1VwoXQT9A3Wy9MM3WgvqSxFWenqJduM=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
