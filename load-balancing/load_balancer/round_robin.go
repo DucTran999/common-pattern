@@ -6,12 +6,14 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"patterns/utils"
+	"sync"
 	"sync/atomic"
 )
 
 type roundRobin struct {
-	backends []*utils.SimpleHTTPServer
-	counter  uint64
+	backends   []*utils.SimpleHTTPServer
+	counter    uint64
+	proxyCache sync.Map
 }
 
 func NewRoundRobinAlg(targets []*utils.SimpleHTTPServer) (*roundRobin, error) {
@@ -27,7 +29,8 @@ func NewRoundRobinAlg(targets []*utils.SimpleHTTPServer) (*roundRobin, error) {
 	}
 
 	return &roundRobin{
-		backends: targets,
+		backends:   targets,
+		proxyCache: sync.Map{},
 	}, nil
 }
 
@@ -45,7 +48,15 @@ func (lb *roundRobin) ForwardRequest(w http.ResponseWriter, r *http.Request) {
 }
 
 func (lb *roundRobin) getOrCreateProxy(target *url.URL) *httputil.ReverseProxy {
-	return httputil.NewSingleHostReverseProxy(target)
+	key := target.String()
+	if proxy, ok := lb.proxyCache.Load(key); ok {
+		return proxy.(*httputil.ReverseProxy)
+	}
+
+	proxy := httputil.NewSingleHostReverseProxy(target)
+	lb.proxyCache.Store(key, proxy)
+
+	return proxy
 }
 
 func (lb *roundRobin) getNextBackend() url.URL {

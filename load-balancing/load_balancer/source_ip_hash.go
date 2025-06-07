@@ -8,10 +8,12 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"patterns/utils"
+	"sync"
 )
 
 type sourceIPHash struct {
-	backends []*utils.SimpleHTTPServer
+	backends   []*utils.SimpleHTTPServer
+	proxyCache sync.Map
 }
 
 func NewSourceIPHashAlgorithm(targets []*utils.SimpleHTTPServer) (*sourceIPHash, error) {
@@ -26,7 +28,10 @@ func NewSourceIPHashAlgorithm(targets []*utils.SimpleHTTPServer) (*sourceIPHash,
 		}
 	}
 
-	sih := &sourceIPHash{backends: targets}
+	sih := &sourceIPHash{
+		backends:   targets,
+		proxyCache: sync.Map{},
+	}
 
 	return sih, nil
 }
@@ -76,5 +81,13 @@ func (lb *sourceIPHash) simpleHash(s string, buckets int) int {
 }
 
 func (lb *sourceIPHash) getOrCreateProxy(target *url.URL) *httputil.ReverseProxy {
-	return httputil.NewSingleHostReverseProxy(target)
+	key := target.String()
+	if proxy, ok := lb.proxyCache.Load(key); ok {
+		return proxy.(*httputil.ReverseProxy)
+	}
+
+	proxy := httputil.NewSingleHostReverseProxy(target)
+	lb.proxyCache.Store(key, proxy)
+
+	return proxy
 }

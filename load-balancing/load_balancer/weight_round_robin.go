@@ -7,12 +7,14 @@ import (
 	"net/url"
 	"patterns/utils"
 	"sort"
+	"sync"
 )
 
 type weightedRoundRobin struct {
 	backends      []*utils.SimpleHTTPServer
 	currentWeight int
 	currentIndex  int
+	proxyCache    sync.Map
 }
 
 func NewWeightedRoundRobinAlg(targets []*utils.SimpleHTTPServer) (*weightedRoundRobin, error) {
@@ -28,7 +30,8 @@ func NewWeightedRoundRobinAlg(targets []*utils.SimpleHTTPServer) (*weightedRound
 	}
 
 	wrr := &weightedRoundRobin{
-		backends: targets,
+		backends:   targets,
+		proxyCache: sync.Map{},
 	}
 
 	wrr.setupBackend()
@@ -50,7 +53,15 @@ func (lb *weightedRoundRobin) ForwardRequest(w http.ResponseWriter, r *http.Requ
 }
 
 func (lb *weightedRoundRobin) getOrCreateProxy(target *url.URL) *httputil.ReverseProxy {
-	return httputil.NewSingleHostReverseProxy(target)
+	key := target.String()
+	if proxy, ok := lb.proxyCache.Load(key); ok {
+		return proxy.(*httputil.ReverseProxy)
+	}
+
+	proxy := httputil.NewSingleHostReverseProxy(target)
+	lb.proxyCache.Store(key, proxy)
+
+	return proxy
 }
 
 func (lb *weightedRoundRobin) getNextBackend() url.URL {
