@@ -5,6 +5,7 @@ import (
 	"net"
 	"net/http"
 	"patterns/utils"
+	"strconv"
 	"time"
 
 	"github.com/rs/zerolog/log"
@@ -51,7 +52,7 @@ func NewLoadBalancer(
 		host: host,
 		port: port,
 		server: &http.Server{
-			Addr:         fmt.Sprintf("%s:%d", host, port),
+			Addr:         net.JoinHostPort(host, strconv.Itoa(port)),
 			Handler:      hdl,
 			ReadTimeout:  10 * time.Second,
 			WriteTimeout: 10 * time.Second,

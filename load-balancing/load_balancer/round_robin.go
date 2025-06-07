@@ -1,6 +1,9 @@
 package loadbalancer
 
 import (
+	"log"
+	"net/http"
+	"net/http/httputil"
 	"net/url"
 	"patterns/utils"
 	"sync/atomic"
@@ -28,8 +31,24 @@ func NewRoundRobinAlg(targets []*utils.SimpleHTTPServer) (*roundRobin, error) {
 	}, nil
 }
 
-// Round robin
-func (lb *roundRobin) GetNextBackend() url.URL {
+func (lb *roundRobin) ForwardRequest(w http.ResponseWriter, r *http.Request) {
+	nextUrl := lb.getNextBackend()
+
+	// Log the next URL to which the request will be forwarded
+	log.Printf("[INFO] load balancer forwarding request to: %v\n", nextUrl.String())
+
+	// Create a reverse proxy for the next backend
+	proxy := lb.getOrCreateProxy(&nextUrl)
+
+	// Serve the request using the reverse proxy
+	proxy.ServeHTTP(w, r)
+}
+
+func (lb *roundRobin) getOrCreateProxy(target *url.URL) *httputil.ReverseProxy {
+	return httputil.NewSingleHostReverseProxy(target)
+}
+
+func (lb *roundRobin) getNextBackend() url.URL {
 	idx := atomic.AddUint64(&lb.counter, 1)
 
 	next := lb.backends[idx%uint64(len(lb.backends))]

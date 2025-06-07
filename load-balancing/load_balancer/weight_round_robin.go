@@ -1,6 +1,9 @@
 package loadbalancer
 
 import (
+	"log"
+	"net/http"
+	"net/http/httputil"
 	"net/url"
 	"patterns/utils"
 	"sort"
@@ -28,12 +31,29 @@ func NewWeightedRoundRobinAlg(targets []*utils.SimpleHTTPServer) (*weightedRound
 		backends: targets,
 	}
 
-	wrr.sortBackendsByWeight()
+	wrr.setupBackend()
 
 	return wrr, nil
 }
 
-func (lb *weightedRoundRobin) GetNextBackend() url.URL {
+func (lb *weightedRoundRobin) ForwardRequest(w http.ResponseWriter, r *http.Request) {
+	nextUrl := lb.getNextBackend()
+
+	// Log the next URL to which the request will be forwarded
+	log.Printf("[INFO] load balancer forwarding request to: %v\n", nextUrl.String())
+
+	// Create a reverse proxy for the next backend
+	proxy := lb.getOrCreateProxy(&nextUrl)
+
+	// Serve the request using the reverse proxy
+	proxy.ServeHTTP(w, r)
+}
+
+func (lb *weightedRoundRobin) getOrCreateProxy(target *url.URL) *httputil.ReverseProxy {
+	return httputil.NewSingleHostReverseProxy(target)
+}
+
+func (lb *weightedRoundRobin) getNextBackend() url.URL {
 	if lb.currentWeight == 0 {
 		lb.currentIndex = lb.calculateNextIndex()
 		lb.currentWeight = lb.backends[lb.currentIndex].Weight
@@ -44,11 +64,17 @@ func (lb *weightedRoundRobin) GetNextBackend() url.URL {
 	return *nextBackend.GetUrl()
 }
 
-func (lb *weightedRoundRobin) sortBackendsByWeight() {
+func (lb *weightedRoundRobin) setupBackend() {
 	// Sort backends by weight in descending order
 	sort.SliceStable(lb.backends, func(i, j int) bool {
-		return lb.backends[i].Weight < lb.backends[j].Weight
+		return lb.backends[i].Weight > lb.backends[j].Weight
 	})
+
+	// Initialize currentWeight and currentIndex
+	if len(lb.backends) > 0 {
+		lb.currentWeight = lb.backends[0].Weight
+		lb.currentIndex = 0
+	}
 }
 
 func (lb *weightedRoundRobin) calculateNextIndex() int {
