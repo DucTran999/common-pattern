@@ -25,6 +25,8 @@ func main() {
 		app.RunSourceIPhashApp(logger)
 	case "lc": // least connection
 		app.RunLeastConnectionApp(logger)
+	case "lr": // lowest response time
+		app.RunLowestResponseApp(logger)
 	default:
 		logger.Fatal().Msg("[ERROR] app not available")
 	}
