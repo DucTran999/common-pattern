@@ -59,22 +59,22 @@ func (lb *resourceBaseLoadAlg) getOrCreateProxy(target *url.URL) *httputil.Rever
 	return proxy
 }
 
-func (lc *resourceBaseLoadAlg) getNextBackend() *url.URL {
+func (lb *resourceBaseLoadAlg) getNextBackend() *url.URL {
 	// Only one backend server return it intermediately
-	if len(lc.backends) == 1 {
-		return lc.backends[0].GetUrl()
+	if len(lb.backends) == 1 {
+		return lb.backends[0].GetUrl()
 	}
 
 	// Lookup the backends got lowest cpu load
-	minCPULoad := lc.backends[0].GetCPULoad()
+	minCPULoad := lb.backends[0].GetCPULoad()
 	backendIdx := 0
 	backendCPUs := []float64{minCPULoad}
 
-	for idx := 1; idx < len(lc.backends); idx++ {
-		backend := lc.backends[idx]
+	for idx := 1; idx < len(lb.backends); idx++ {
+		backend := lb.backends[idx]
 		backendCPUs = append(backendCPUs, backend.GetCPULoad())
 
-		if minCPULoad > lc.backends[idx].GetCPULoad() {
+		if minCPULoad > lb.backends[idx].GetCPULoad() {
 			minCPULoad = backend.GetCPULoad()
 			backendIdx = idx
 		}
@@ -85,5 +85,5 @@ func (lc *resourceBaseLoadAlg) getNextBackend() *url.URL {
 		backendCPUs, backendIdx, minCPULoad,
 	)
 
-	return lc.backends[backendIdx].GetUrl()
+	return lb.backends[backendIdx].GetUrl()
 }

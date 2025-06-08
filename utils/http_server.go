@@ -57,10 +57,14 @@ func (s *SimpleHTTPServer) GetWeight() int {
 }
 
 func (s *SimpleHTTPServer) GetConnection() int {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
 	return s.connection
 }
 
 func (s *SimpleHTTPServer) GetCPULoad() float64 {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
 	return s.cpuLoad
 }
 
