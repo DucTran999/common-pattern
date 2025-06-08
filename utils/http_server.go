@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"net/http"
 	"net/url"
+	"sync"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -31,6 +32,8 @@ type SimpleHTTPServer struct {
 
 	weight     int
 	connection int
+	mutex      sync.Mutex
+	latency    time.Duration
 	router     *mux.Router
 	server     *http.Server
 }
@@ -43,6 +46,7 @@ func NewSimpleHTTPServer(host string, port int, id, weight int) *SimpleHTTPServe
 		id:     id,
 		weight: weight,
 		router: mux.NewRouter(),
+		mutex:  sync.Mutex{},
 	}
 }
 
@@ -67,6 +71,10 @@ func (s *SimpleHTTPServer) GetUrl() *url.URL {
 	}
 
 	return buildUrl
+}
+
+func (s *SimpleHTTPServer) Latency() time.Duration {
+	return s.latency
 }
 
 // Start the server
@@ -108,6 +116,10 @@ func (s *SimpleHTTPServer) reqHandler(w http.ResponseWriter, r *http.Request) {
 	// Simulate change the connection to this backend server
 	s.connection = s.randomConnectionNumber(DefaultMinConnection, DefaultMaxConnection)
 
+	s.mutex.Lock()
+	s.latency = time.Duration(s.simulateResponseTime()) * time.Millisecond
+	s.mutex.Unlock()
+
 	if _, err := fmt.Fprintf(w, "Server %d, handle request %s!", s.id, reqID); err != nil {
 		log.Error().Err(err).Msg("failed to write response")
 	}
@@ -120,4 +132,8 @@ func (s *SimpleHTTPServer) routes() {
 
 func (s *SimpleHTTPServer) randomConnectionNumber(min, max int) int {
 	return r.Intn(max-min+1) + min
+}
+
+func (s *SimpleHTTPServer) simulateResponseTime() int {
+	return r.Intn(300) + 200
 }
