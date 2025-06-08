@@ -25,6 +25,8 @@ func (a Algorithm) String() string {
 		return "Least Connection"
 	case LowestLatency:
 		return "Lowest Response Time"
+	case ResourceBase:
+		return "Resource Base"
 	default:
 		return ""
 	}
@@ -36,6 +38,7 @@ const (
 	SourceIPHash
 	LeastConnection
 	LowestLatency
+	ResourceBase
 )
 
 type LoadBalancer interface {

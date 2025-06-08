@@ -50,6 +50,8 @@ func (h *loadBalanceHandler) getAlgorithmImpl(alg Algorithm) (AlgorithmImplement
 		return NewLeastConnectionAlg(h.targets)
 	case LowestLatency:
 		return NewLowestLatencyAlg(h.targets)
+	case ResourceBase:
+		return NewResourceBaseLoadAlg(h.targets)
 	default:
 		return nil, ErrUnsupportedAlg
 	}

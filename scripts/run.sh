@@ -16,6 +16,7 @@ show_menu() {
     echo "6) alg: source-ip-hash"
     echo "7) alg: least connection"
     echo "8) alg: lowest latency"
+    echo "9) alg: resource base"
     echo "0) Exit"
     echo "=========================="
 }
@@ -71,6 +72,12 @@ case "$choice" in
     echo "======== APP: load balancing ========"
     echo "--------------------------------------"
     go run load-balancing/main.go --app-name=ll
+    ;;
+9)
+    clear
+    echo "======== APP: load balancing ========"
+    echo "--------------------------------------"
+    go run load-balancing/main.go --app-name=rb
     ;;
 0)
     echo "Goodbye!"
