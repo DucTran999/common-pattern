@@ -46,6 +46,8 @@ func (h *loadBalanceHandler) getAlgorithmImpl(alg Algorithm) (AlgorithmImplement
 		return NewWeightedRoundRobinAlg(h.targets)
 	case SourceIPHash:
 		return NewSourceIPHashAlgorithm(h.targets)
+	case LeastConnection:
+		return NewLeastConnectionAlg(h.targets)
 	default:
 		return nil, ErrUnsupportedAlg
 	}

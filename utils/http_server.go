@@ -3,6 +3,7 @@ package utils
 import (
 	"context"
 	"fmt"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"time"
@@ -11,13 +12,20 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+const (
+	DefaultMaxConnection = 10
+	DefaultMinConnection = 1
+)
+
 type SimpleHTTPServer struct {
-	Host   string
-	Port   int
-	ID     int
-	Weight int
-	Router *mux.Router
-	Server *http.Server
+	Host string
+	Port int
+	ID   int
+
+	Weight     int
+	Connection int
+	Router     *mux.Router
+	Server     *http.Server
 }
 
 // Constructor function
@@ -33,6 +41,10 @@ func NewSimpleHTTPServer(host string, port int, id, weight int) *SimpleHTTPServe
 
 func (s *SimpleHTTPServer) GetWeight() int {
 	return s.Weight
+}
+
+func (s *SimpleHTTPServer) GetConnection() int {
+	return s.Connection
 }
 
 func (s *SimpleHTTPServer) GetUrl() *url.URL {
@@ -86,6 +98,9 @@ func (s *SimpleHTTPServer) reqHandler(w http.ResponseWriter, r *http.Request) {
 	handleTime := time.Second * time.Duration(1/s.Weight)
 	time.Sleep(handleTime)
 
+	// Simulate change the connection to this backend server
+	s.Connection = s.randomConnectionNumber(DefaultMinConnection, DefaultMaxConnection)
+
 	if _, err := fmt.Fprintf(w, "Server %d, handle request %s!", s.ID, reqID); err != nil {
 		log.Error().Err(err).Msg("failed to write response")
 	}
@@ -94,4 +109,8 @@ func (s *SimpleHTTPServer) reqHandler(w http.ResponseWriter, r *http.Request) {
 // Method to initialize routes
 func (s *SimpleHTTPServer) routes() {
 	s.Router.HandleFunc("/req/{req_id}", s.reqHandler)
+}
+
+func (s *SimpleHTTPServer) randomConnectionNumber(min, max int) int {
+	return rand.Intn(max-min+1) + min //nolint:gosec
 }

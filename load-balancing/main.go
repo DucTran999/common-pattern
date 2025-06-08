@@ -13,16 +13,18 @@ func main() {
 	// Initialize zerolog with ConsoleWriter for pretty terminal output
 	logger := zerolog.New(os.Stderr).With().Timestamp().Logger()
 
-	appName := flag.String("app-name", "round-robin", "Load balance app to run")
+	appName := flag.String("app-name", "rr", "Load balance app to run")
 	flag.Parse()
 
 	switch *appName {
-	case "round-robin":
+	case "rr":
 		app.RunRoundRobinApp(logger)
-	case "wrr":
+	case "wrr": // weight round robin
 		app.RunWeightRoundRobinApp(logger)
-	case "sih":
+	case "sih": // source ip hash
 		app.RunSourceIPhashApp(logger)
+	case "lc": // least connection
+		app.RunLeastConnectionApp(logger)
 	default:
 		logger.Fatal().Msg("[ERROR] app not available")
 	}
