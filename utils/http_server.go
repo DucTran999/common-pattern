@@ -3,6 +3,7 @@ package utils
 import (
 	"context"
 	"fmt"
+	"math"
 	"math/rand"
 	"net/http"
 	"net/url"
@@ -32,6 +33,7 @@ type SimpleHTTPServer struct {
 
 	weight     int
 	connection int
+	cpuLoad    float64
 	mutex      sync.Mutex
 	latency    time.Duration
 	router     *mux.Router
@@ -55,7 +57,15 @@ func (s *SimpleHTTPServer) GetWeight() int {
 }
 
 func (s *SimpleHTTPServer) GetConnection() int {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
 	return s.connection
+}
+
+func (s *SimpleHTTPServer) GetCPULoad() float64 {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+	return s.cpuLoad
 }
 
 func (s *SimpleHTTPServer) GetUrl() *url.URL {
@@ -118,6 +128,7 @@ func (s *SimpleHTTPServer) reqHandler(w http.ResponseWriter, r *http.Request) {
 
 	s.mutex.Lock()
 	s.latency = time.Duration(s.simulateResponseTime()) * time.Millisecond
+	s.cpuLoad = s.simulateCPULoad()
 	s.mutex.Unlock()
 
 	if _, err := fmt.Fprintf(w, "Server %d, handle request %s!", s.id, reqID); err != nil {
@@ -136,4 +147,13 @@ func (s *SimpleHTTPServer) randomConnectionNumber(min, max int) int {
 
 func (s *SimpleHTTPServer) simulateResponseTime() int {
 	return r.Intn(300) + 200
+}
+
+func (s *SimpleHTTPServer) simulateCPULoad() float64 {
+	min := 0.1
+	max := 100.0
+
+	// Generate a float in [0.1, 100.0)
+	f := r.Float64()*(max-min) + min
+	return math.Round(f*100) / 100
 }
