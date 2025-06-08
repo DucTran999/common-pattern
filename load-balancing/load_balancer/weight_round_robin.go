@@ -67,7 +67,7 @@ func (lb *weightedRoundRobin) getOrCreateProxy(target *url.URL) *httputil.Revers
 func (lb *weightedRoundRobin) getNextBackend() url.URL {
 	if lb.currentWeight == 0 {
 		lb.currentIndex = lb.calculateNextIndex()
-		lb.currentWeight = lb.backends[lb.currentIndex].Weight
+		lb.currentWeight = lb.backends[lb.currentIndex].GetWeight()
 	}
 
 	lb.currentWeight--
@@ -78,12 +78,12 @@ func (lb *weightedRoundRobin) getNextBackend() url.URL {
 func (lb *weightedRoundRobin) setupBackend() {
 	// Sort backends by weight in descending order
 	sort.SliceStable(lb.backends, func(i, j int) bool {
-		return lb.backends[i].Weight > lb.backends[j].Weight
+		return lb.backends[i].GetWeight() > lb.backends[j].GetWeight()
 	})
 
 	// Initialize currentWeight and currentIndex
 	if len(lb.backends) > 0 {
-		lb.currentWeight = lb.backends[0].Weight
+		lb.currentWeight = lb.backends[0].GetWeight()
 		lb.currentIndex = 0
 	}
 }
