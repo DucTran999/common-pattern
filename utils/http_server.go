@@ -17,6 +17,13 @@ const (
 	DefaultMinConnection = 1
 )
 
+var r *rand.Rand
+
+func init() {
+	src := rand.NewSource(time.Now().UnixNano())
+	r = rand.New(src) //nolint:gosec
+}
+
 type SimpleHTTPServer struct {
 	host string
 	port int
@@ -112,5 +119,5 @@ func (s *SimpleHTTPServer) routes() {
 }
 
 func (s *SimpleHTTPServer) randomConnectionNumber(min, max int) int {
-	return rand.Intn(max-min+1) + min //nolint:gosec
+	return r.Intn(max-min+1) + min
 }
