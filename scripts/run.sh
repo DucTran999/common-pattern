@@ -14,6 +14,7 @@ show_menu() {
     echo "4) alg: round-robin"
     echo "5) alg: weight-round-robin"
     echo "6) alg: source-ip-hash"
+    echo "7) alg: least connection"
     echo "0) Exit"
     echo "=========================="
 }
@@ -44,7 +45,7 @@ case "$choice" in
     clear
     echo "======== APP: load balancing ========"
     echo "--------------------------------------"
-    go run load-balancing/main.go --app-name=round-robin
+    go run load-balancing/main.go --app-name=rr
     ;;
 5)
     clear
@@ -57,6 +58,12 @@ case "$choice" in
     echo "======== APP: load balancing ========"
     echo "--------------------------------------"
     go run load-balancing/main.go --app-name=sih
+    ;;
+7)
+    clear
+    echo "======== APP: load balancing ========"
+    echo "--------------------------------------"
+    go run load-balancing/main.go --app-name=lc
     ;;
 0)
     echo "Goodbye!"

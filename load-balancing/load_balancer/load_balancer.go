@@ -21,6 +21,8 @@ func (a Algorithm) String() string {
 		return "Weighted Round Robin"
 	case SourceIPHash:
 		return "Source IP Hash"
+	case LeastConnection:
+		return "Least Connection"
 	default:
 		return ""
 	}
@@ -30,6 +32,7 @@ const (
 	RoundRobin Algorithm = iota
 	WeightedRoundRobin
 	SourceIPHash
+	LeastConnection
 )
 
 type LoadBalancer interface {
