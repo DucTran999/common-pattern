@@ -10,12 +10,12 @@ import (
 	"time"
 )
 
-type lowestResponseAlg struct {
+type lowestLatencyAlg struct {
 	backends   []*utils.SimpleHTTPServer
 	proxyCache sync.Map
 }
 
-func NewLowestResponseAlg(targets []*utils.SimpleHTTPServer) (*lowestResponseAlg, error) {
+func NewLowestLatencyAlg(targets []*utils.SimpleHTTPServer) (*lowestLatencyAlg, error) {
 	if len(targets) == 0 {
 		return nil, ErrNoTargetServersFound
 	}
@@ -27,7 +27,7 @@ func NewLowestResponseAlg(targets []*utils.SimpleHTTPServer) (*lowestResponseAlg
 		}
 	}
 
-	lr := &lowestResponseAlg{
+	lr := &lowestLatencyAlg{
 		backends:   targets,
 		proxyCache: sync.Map{},
 	}
@@ -35,7 +35,7 @@ func NewLowestResponseAlg(targets []*utils.SimpleHTTPServer) (*lowestResponseAlg
 	return lr, nil
 }
 
-func (lb *lowestResponseAlg) ForwardRequest(w http.ResponseWriter, r *http.Request) {
+func (lb *lowestLatencyAlg) ForwardRequest(w http.ResponseWriter, r *http.Request) {
 	nextUrl := lb.getNextBackend()
 
 	// Log the next URL to which the request will be forwarded
@@ -48,7 +48,7 @@ func (lb *lowestResponseAlg) ForwardRequest(w http.ResponseWriter, r *http.Reque
 	proxy.ServeHTTP(w, r)
 }
 
-func (lb *lowestResponseAlg) getOrCreateProxy(target *url.URL) *httputil.ReverseProxy {
+func (lb *lowestLatencyAlg) getOrCreateProxy(target *url.URL) *httputil.ReverseProxy {
 	key := target.String()
 	if proxy, ok := lb.proxyCache.Load(key); ok {
 		return proxy.(*httputil.ReverseProxy)
@@ -60,7 +60,7 @@ func (lb *lowestResponseAlg) getOrCreateProxy(target *url.URL) *httputil.Reverse
 	return proxy
 }
 
-func (lb *lowestResponseAlg) getNextBackend() *url.URL {
+func (lb *lowestLatencyAlg) getNextBackend() *url.URL {
 	if len(lb.backends) == 1 {
 		return lb.backends[0].GetUrl()
 	}
@@ -80,7 +80,7 @@ func (lb *lowestResponseAlg) getNextBackend() *url.URL {
 	}
 
 	log.Printf(
-		"[INFO] backend latency: %v, select: %d, connection: %d \n",
+		"[INFO] backend latency: %v, select: %d, latency: %v\n",
 		backendLatency, backendIdx, minLatency,
 	)
 

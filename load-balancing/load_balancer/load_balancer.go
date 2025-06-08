@@ -23,7 +23,7 @@ func (a Algorithm) String() string {
 		return "Source IP Hash"
 	case LeastConnection:
 		return "Least Connection"
-	case LowestResponseTime:
+	case LowestLatency:
 		return "Lowest Response Time"
 	default:
 		return ""
@@ -35,7 +35,7 @@ const (
 	WeightedRoundRobin
 	SourceIPHash
 	LeastConnection
-	LowestResponseTime
+	LowestLatency
 )
 
 type LoadBalancer interface {

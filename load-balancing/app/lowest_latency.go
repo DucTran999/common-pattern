@@ -7,7 +7,7 @@ import (
 	"github.com/rs/zerolog"
 )
 
-func RunLowestResponseApp(logger zerolog.Logger) {
+func RunLowestLatencyApp(logger zerolog.Logger) {
 	// Initialize the backend builder and configure number of backend servers
 	backendBuilder := components.NewBackendBuilder(logger)
 	backendBuilder.SetNumberOfBackends(5)
@@ -18,8 +18,8 @@ func RunLowestResponseApp(logger zerolog.Logger) {
 		logger.Fatal().Msgf("failed when build backends: %v", err)
 	}
 
-	// Create a new load balancer on localhost:8080 using the backends and using lowest response algorithm
-	lb, err := loadbalancer.NewLoadBalancer("localhost", 8080, backends, loadbalancer.LowestResponseTime)
+	// Create a new load balancer on localhost:8080 using the backends and using lowest latency algorithm
+	lb, err := loadbalancer.NewLoadBalancer("localhost", 8080, backends, loadbalancer.LowestLatency)
 	if err != nil {
 		logger.Fatal().Msgf("failed to init loadbalancer: %v", err)
 	}
