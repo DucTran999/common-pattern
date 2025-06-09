@@ -35,5 +35,5 @@ func (t *television) CheckAllDeviceOn() bool {
 }
 
 func (t *television) CheckAllDeviceOff() bool {
-	return !t.CheckAllDeviceOn()
+	return !t.dvd.Status() && !t.proj.Status() && !t.screen.Status() && !t.soundSys.Status()
 }
