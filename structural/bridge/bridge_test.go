@@ -1,17 +1,42 @@
-package bridge
+package bridge_test
 
-import "testing"
+import (
+	"bytes"
+	"os"
+	"patterns/structural/bridge"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+)
 
 func Test_PrintDocument(t *testing.T) {
+	// Capture stdout to verify printed output
+	old := os.Stdout
+	r, w, _ := os.Pipe()
+	os.Stdout = w
+
 	// Print document using cannon printer
-	doc := Document{
-		Printer: &Cannon{},
+	cannonDoc := bridge.Document{
+		Printer: &bridge.Cannon{},
 	}
-	doc.Print()
+	cannonDoc.Print()
 
 	// Print document using Epson printer
-	docColorful := Document{
-		Printer: &Epson{},
+	epsonDoc := bridge.Document{
+		Printer: &bridge.Epson{},
 	}
-	docColorful.Print()
+	epsonDoc.Print()
+
+	// Restore stdout and read captured output
+	err := w.Close()
+	require.NoError(t, err)
+	os.Stdout = old
+	var buf bytes.Buffer
+	_, err = buf.ReadFrom(r)
+	require.NoError(t, err)
+	output := buf.String()
+
+	require.Contains(t, output, "Printing using Cannon")
+	assert.Contains(t, output, "Printing using Epson")
 }
