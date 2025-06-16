@@ -62,18 +62,6 @@ func estimateK(n, m uint64) uint64 {
 	return uint64(math.Round((float64(m) / float64(n)) * math.Ln2))
 }
 
-func (bf *bloomFilter) hash1(data []byte) uint64 {
-	h1 := fnv.New64a() // use hash fvn 1 a
-	h1.Write(data)
-	return h1.Sum64()
-}
-
-func (bf *bloomFilter) hash2(data []byte) uint64 {
-	h1 := fnv.New64() // use hash fvn 1
-	h1.Write(data)
-	return h1.Sum64()
-}
-
 func (bf *bloomFilter) Add(data []byte) {
 	// h1 and h2 must be different to reduce collision
 	h1 := bf.hash1(data)
@@ -81,7 +69,7 @@ func (bf *bloomFilter) Add(data []byte) {
 
 	// Mark bit
 	for i := uint64(0); i < bf.k; i++ {
-		pos := (h1 + uint64(i)*h2) % uint64(bf.m)
+		pos := (h1 + i*h2) % bf.m
 		bf.bitset[pos] = true
 	}
 }
@@ -91,11 +79,23 @@ func (bf *bloomFilter) MightContain(data []byte) bool {
 	h2 := bf.hash2(data)
 
 	for i := uint64(0); i < bf.k; i++ {
-		pos := (h1 + uint64(i)*h2) % uint64(bf.m)
+		pos := (h1 + i*h2) % bf.m
 		if !bf.bitset[pos] {
 			return false
 		}
 	}
 
 	return true
+}
+
+func (bf *bloomFilter) hash1(data []byte) uint64 {
+	h1 := fnv.New64a() // use hash fvn 1 a
+	_, _ = h1.Write(data)
+	return h1.Sum64()
+}
+
+func (bf *bloomFilter) hash2(data []byte) uint64 {
+	h1 := fnv.New64() // use hash fvn 1
+	_, _ = h1.Write(data)
+	return h1.Sum64()
 }
