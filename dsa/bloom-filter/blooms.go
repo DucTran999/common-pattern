@@ -1,8 +1,14 @@
 package bloom
 
 import (
+	"errors"
 	"hash/fnv"
 	"math"
+)
+
+var (
+	ErrInvalidNumberOfItems     = errors.New("numberOfItems must be > 0")
+	ErrInvalidFalsePositiveRate = errors.New("fpRate must be in (0,1)")
 )
 
 type BloomFilter interface {
@@ -18,7 +24,14 @@ type bloomFilter struct {
 }
 
 // Create a Bloom filter
-func NewBloomFilter(numberOfItems uint64, fpRate float64) *bloomFilter {
+func NewBloomFilter(numberOfItems uint64, fpRate float64) (*bloomFilter, error) {
+	if numberOfItems == 0 {
+		return nil, ErrInvalidNumberOfItems
+	}
+	if fpRate <= 0 || fpRate >= 1 {
+		return nil, ErrInvalidFalsePositiveRate
+	}
+
 	m := estimateM(numberOfItems, fpRate)
 	k := estimateK(numberOfItems, m)
 
@@ -26,7 +39,7 @@ func NewBloomFilter(numberOfItems uint64, fpRate float64) *bloomFilter {
 		bitset: make([]bool, m),
 		k:      k,
 		m:      m,
-	}
+	}, nil
 }
 
 // estimateM calculates the optimal number of bits (m) required in the Bloom filter's bit array,
@@ -56,10 +69,7 @@ func estimateM(n uint64, p float64) uint64 {
 //   - n: expected number of elements
 //   - m: size of the bit array (in bits)
 func estimateK(n, m uint64) uint64 {
-	if n == 0 || m == 0 {
-		return 1 // Avoid division by zero or invalid config
-	}
-	return uint64(math.Round((float64(m) / float64(n)) * math.Ln2))
+	return max(uint64(math.Round((float64(m)/float64(n))*math.Ln2)), 1)
 }
 
 func (bf *bloomFilter) Add(data []byte) {
