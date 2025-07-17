@@ -23,7 +23,7 @@ tasks:
   codecov:
     desc: run unit test and force coverage > 80%
     cmds:
-      - go test -coverprofile=coverage.out ./...
+      - go test -v -coverprofile=coverage.out ./...
 
   deps:
     desc: install dependencies
