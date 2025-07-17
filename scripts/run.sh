@@ -2,7 +2,6 @@
 
 # path Variable
 CONCURRENCY_PKG=concurrency
-LOAD_BALANCE_PKG=load-balancing
 
 show_menu() {
     echo "========== MENU =========="
@@ -10,13 +9,6 @@ show_menu() {
     echo "1) worker pool"
     echo "2) generator"
     echo "3) multiplexing"
-    echo "===== Load balancing ====="
-    echo "4) alg: round-robin"
-    echo "5) alg: weight-round-robin"
-    echo "6) alg: source-ip-hash"
-    echo "7) alg: least connection"
-    echo "8) alg: lowest latency"
-    echo "9) alg: resource base"
     echo "0) Exit"
     echo "=========================="
 }
@@ -43,42 +35,6 @@ case "$choice" in
     echo "======== Multiplexing ========="
     go run $CONCURRENCY_PKG/main.go --app-name=multiplexing
     ;;
-4)
-    clear
-    echo "======== APP: load balancing ========"
-    echo "--------------------------------------"
-    go run load-balancing/main.go --app-name=rr
-    ;;
-5)
-    clear
-    echo "======== APP: load balancing ========"
-    echo "--------------------------------------"
-    go run load-balancing/main.go --app-name=wrr
-    ;;
-6)
-    clear
-    echo "======== APP: load balancing ========"
-    echo "--------------------------------------"
-    go run load-balancing/main.go --app-name=sih
-    ;;
-7)
-    clear
-    echo "======== APP: load balancing ========"
-    echo "--------------------------------------"
-    go run load-balancing/main.go --app-name=lc
-    ;;
-8)
-    clear
-    echo "======== APP: load balancing ========"
-    echo "--------------------------------------"
-    go run load-balancing/main.go --app-name=ll
-    ;;
-9)
-    clear
-    echo "======== APP: load balancing ========"
-    echo "--------------------------------------"
-    go run load-balancing/main.go --app-name=rb
-    ;;
 0)
     echo "Goodbye!"
     exit 0
@@ -87,5 +43,3 @@ case "$choice" in
     echo "Invalid option. Please try again."
     ;;
 esac
-
-echo "" # Add a line break

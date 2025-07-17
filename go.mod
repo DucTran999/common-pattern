@@ -4,7 +4,6 @@ go 1.23.1
 
 require (
 	github.com/DucTran999/shared-pkg v0.0.0-20250523033839-7cc82356af6d
-	github.com/go-faker/faker/v4 v4.6.1
 	github.com/gorilla/mux v1.8.1
 	github.com/labstack/gommon v0.4.2
 	github.com/rs/zerolog v1.34.0
@@ -19,6 +18,5 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	golang.org/x/sys v0.31.0 // indirect
-	golang.org/x/text v0.24.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

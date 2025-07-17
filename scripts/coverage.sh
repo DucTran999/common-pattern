@@ -19,7 +19,7 @@ COV_PATH=test/coverage
 
 mkdir -p $COV_PATH
 # Find all packages excluding `/app`
-PKGS=$(go list ./concurrency/... ./dsa/... ./creational/... ./behavioral/... ./structural/... | grep -v '/app')
+PKGS=$(go list ./concurrency/... ./creational/... ./behavioral/... ./structural/... )
 
 # Run tests with coverage
 if ! go test -cover $PKGS -coverprofile="$COV_PATH/coverage.out"; then
