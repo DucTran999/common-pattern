@@ -9,6 +9,7 @@ import (
 )
 
 func Test_PhysicalFactory(t *testing.T) {
+	t.Parallel()
 	type testCase struct {
 		testName     string
 		name         string
@@ -53,6 +54,7 @@ func Test_PhysicalFactory(t *testing.T) {
 
 	for _, tc := range testcases {
 		t.Run(tc.testName, func(t *testing.T) {
+			t.Parallel()
 			product, err := pf.AddProduct(tc.name, tc.price, tc.weight)
 
 			if err != nil {
@@ -67,6 +69,7 @@ func Test_PhysicalFactory(t *testing.T) {
 }
 
 func Test_DigitalFactory(t *testing.T) {
+	t.Parallel()
 	type testCase struct {
 		testName     string
 		name         string
@@ -111,6 +114,7 @@ func Test_DigitalFactory(t *testing.T) {
 
 	for _, tc := range testcases {
 		t.Run(tc.testName, func(t *testing.T) {
+			t.Parallel()
 			product, err := pf.AddProduct(tc.name, tc.price, tc.downloadLink)
 
 			if err != nil {

@@ -41,6 +41,7 @@ linters:
     - exhaustruct # Enforces struct fields to be ordered by name — useful for clean architecture
     - nlreturn
     - varnamelen
+    - revive
 
   settings:
     depguard:

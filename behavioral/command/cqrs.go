@@ -4,6 +4,10 @@ import "errors"
 
 type Command any
 
+var (
+	ErrInvalidCommand = errors.New("invalid command")
+)
+
 type CreateUserCommand struct {
 	Name  string
 	Email string
@@ -24,7 +28,7 @@ func NewCreateUserHandler(repo UserRepository) CommandHandler {
 func (h createUserHandler) Handle(cmd Command) error {
 	c, ok := cmd.(*CreateUserCommand)
 	if !ok {
-		return errors.New("invalid command")
+		return ErrInvalidCommand
 	}
 
 	return h.repo.Save(User{Name: c.Name, Email: c.Email})

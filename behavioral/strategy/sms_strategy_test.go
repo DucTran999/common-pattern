@@ -8,6 +8,7 @@ import (
 )
 
 func Test_NewSmsStrategy(t *testing.T) {
+	t.Parallel()
 	testCases := []struct {
 		name        string
 		gateway     string
@@ -42,6 +43,7 @@ func Test_NewSmsStrategy(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			_, err := strategy.NewSMSStrategy(tc.gateway, tc.sender)
 
 			require.ErrorIs(t, err, tc.expectError)
@@ -50,6 +52,7 @@ func Test_NewSmsStrategy(t *testing.T) {
 }
 
 func Test_SmsStrategy_SendNotification(t *testing.T) {
+	t.Parallel()
 	smsStrategy, err := strategy.NewSMSStrategy("sms.example.com", "+1234567890")
 	require.NoError(t, err)
 	testCases := []struct {
@@ -86,6 +89,7 @@ func Test_SmsStrategy_SendNotification(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			err := smsStrategy.Send(tc.to, tc.message)
 
 			require.ErrorIs(t, err, tc.expectError)

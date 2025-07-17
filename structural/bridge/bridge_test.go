@@ -11,6 +11,7 @@ import (
 )
 
 func Test_PrintDocument(t *testing.T) {
+	t.Parallel()
 	// Capture stdout to verify printed output
 	old := os.Stdout
 	r, w, _ := os.Pipe()

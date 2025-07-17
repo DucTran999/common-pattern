@@ -9,6 +9,7 @@ import (
 )
 
 func TestChanelStrategyString(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		strategy strategy.ChannelStrategy
 		expected string
@@ -19,6 +20,7 @@ func TestChanelStrategyString(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		t.Parallel()
 		actual := tt.strategy.String()
 
 		assert.Equal(t, tt.expected, actual)
@@ -26,6 +28,7 @@ func TestChanelStrategyString(t *testing.T) {
 }
 
 func Test_NotificationManager(t *testing.T) {
+	t.Parallel()
 	// Initialize the notification manager
 	nm := strategy.NewNotificationManager()
 

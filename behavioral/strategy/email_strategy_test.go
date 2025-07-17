@@ -8,6 +8,7 @@ import (
 )
 
 func Test_NewEmailStrategy(t *testing.T) {
+	t.Parallel()
 	testCases := []struct {
 		name        string
 		host        string
@@ -45,6 +46,7 @@ func Test_NewEmailStrategy(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			_, err := strategy.NewEmailStrategy(tc.host, tc.port, tc.sender)
 
 			require.ErrorIs(t, err, tc.expectError)
@@ -53,6 +55,7 @@ func Test_NewEmailStrategy(t *testing.T) {
 }
 
 func Test_EmailStrategy_SendNotification(t *testing.T) {
+	t.Parallel()
 	emailStrategy, err := strategy.NewEmailStrategy("smtp.example.com", 587, "no-reply@gmail.com")
 	require.NoError(t, err)
 
@@ -84,6 +87,7 @@ func Test_EmailStrategy_SendNotification(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			err := emailStrategy.Send(tc.to, tc.message)
 
 			require.ErrorIs(t, err, tc.expectError)

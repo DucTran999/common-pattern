@@ -9,6 +9,8 @@ import (
 )
 
 func Test_DocumentClone(t *testing.T) {
+	t.Parallel()
+
 	doc := &prototype.Document{
 		Title: "Original Title",
 		Body:  "This is the body of the original document.",
