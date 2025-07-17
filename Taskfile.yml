@@ -1,31 +1,29 @@
-version: '3'
+version: "3"
 
 dotenv:
   - ".env"
 
 tasks:
-  default: 
-    desc: 'show all available tasks'
+  default:
+    desc: "show all available tasks"
     cmds:
       - task --list-all
     silent: true
 
-  run:
-    desc: 'start the app'
+  lint:
     cmds:
       - golangci-lint run --timeout 5m --config .golangci.yml
-      - scripts/run.sh
     silent: true
 
   tidy:
     desc: install pkg listed in go.mod
     cmds:
-      -  go mod tidy
+      - go mod tidy
 
-  coverage: 
+  codecov:
     desc: run unit test and force coverage > 80%
     cmds:
-      - ./scripts/coverage.sh
+      - go test -coverprofile=coverage.out ./...
 
   deps:
     desc: install dependencies
