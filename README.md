@@ -1,7 +1,7 @@
 # GO Patterns
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/DucTran999/common-pattern)](https://goreportcard.com/report/github.com/DucTran999/common-pattern)
-[![Go](https://img.shields.io/badge/Go-1.23-blue?logo=go)](https://golang.org)
+[![Go](https://img.shields.io/badge/Go-1.24.5-blue?logo=go)](https://golang.org)
 [![codecov](https://codecov.io/gh/DucTran999/common-pattern/graph/badge.svg?token=5XBMMBKCPD)](https://codecov.io/gh/DucTran999/common-pattern)
 [![License](https://img.shields.io/github/license/DucTran999/common-pattern)](LICENSE)
 
