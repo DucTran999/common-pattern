@@ -1,9 +1,9 @@
 # GO Patterns
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/DucTran999/common-pattern)](https://goreportcard.com/report/github.com/DucTran999/common-pattern)
+[![Go Report Card](https://goreportcard.com/badge/github.com/DucTran999/go-patterns)](https://goreportcard.com/report/github.com/DucTran999/go-patterns)
 [![Go](https://img.shields.io/badge/Go-1.24.5-blue?logo=go)](https://golang.org)
-[![codecov](https://codecov.io/gh/DucTran999/common-pattern/graph/badge.svg?token=5XBMMBKCPD)](https://codecov.io/gh/DucTran999/common-pattern)
-[![License](https://img.shields.io/github/license/DucTran999/common-pattern)](LICENSE)
+[![codecov](https://codecov.io/gh/DucTran999/go-patterns/graph/badge.svg?token=5XBMMBKCPD)](https://codecov.io/gh/DucTran999/go-patterns)
+[![License](https://img.shields.io/github/license/DucTran999/go-patterns)](LICENSE)
 
 A personal collection of patterns, concurrency models, and load balancing techniques explored while learning Go.
 
@@ -33,8 +33,8 @@ Ensure the following tools are installed on your machine:
 Clone the repository:
 
 ```bash
-git clone https://github.com/DucTran999/common-pattern.git
-cd common-pattern
+git clone https://github.com/DucTran999/go-patterns.git
+cd go-patterns
 ```
 
 ---
