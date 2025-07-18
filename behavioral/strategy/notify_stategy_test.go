@@ -11,19 +11,23 @@ import (
 func TestChanelStrategyString(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
+		name     string
 		strategy strategy.ChannelStrategy
 		expected string
 	}{
-		{0, "Email"},
-		{1, "SMS"},
-		{99, "Unknown"},
+		{"email strategy", 0, "Email"},
+		{"sms strategy", 1, "SMS"},
+		{"unknown", 99, "Unknown"},
 	}
 
 	for _, tt := range tests {
-		t.Parallel()
-		actual := tt.strategy.String()
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 
-		assert.Equal(t, tt.expected, actual)
+			actual := tt.strategy.String()
+
+			assert.Equal(t, tt.expected, actual)
+		})
 	}
 }
 
