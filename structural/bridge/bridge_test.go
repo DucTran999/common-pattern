@@ -6,6 +6,7 @@ import (
 )
 
 func Test_PrintDocument(t *testing.T) {
+	t.Parallel()
 	// Print document using cannon printer
 	cannonDoc := bridge.Document{
 		Printer: &bridge.Cannon{},
