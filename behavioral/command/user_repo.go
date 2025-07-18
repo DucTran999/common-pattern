@@ -1,6 +1,6 @@
 package command
 
-import "fmt"
+import "log"
 
 type UserRepository interface {
 	Save(user User) error
@@ -14,7 +14,7 @@ func NewUserRepository() *userRepo {
 }
 
 func (r *userRepo) Save(u User) error {
-	fmt.Println("Saving user:", u.Name, "with email:", u.Email)
+	log.Println("Saving user:", u.Name, "with email:", u.Email)
 
 	return nil
 }

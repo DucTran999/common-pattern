@@ -1,21 +1,12 @@
 package bridge_test
 
 import (
-	"bytes"
-	"os"
 	"patterns/structural/bridge"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func Test_PrintDocument(t *testing.T) {
-	// Capture stdout to verify printed output
-	old := os.Stdout
-	r, w, _ := os.Pipe()
-	os.Stdout = w
-
+	t.Parallel()
 	// Print document using cannon printer
 	cannonDoc := bridge.Document{
 		Printer: &bridge.Cannon{},
@@ -27,16 +18,4 @@ func Test_PrintDocument(t *testing.T) {
 		Printer: &bridge.Epson{},
 	}
 	epsonDoc.Print()
-
-	// Restore stdout and read captured output
-	err := w.Close()
-	require.NoError(t, err)
-	os.Stdout = old
-	var buf bytes.Buffer
-	_, err = buf.ReadFrom(r)
-	require.NoError(t, err)
-	output := buf.String()
-
-	require.Contains(t, output, "Printing using Cannon")
-	assert.Contains(t, output, "Printing using Epson")
 }

@@ -8,6 +8,7 @@ import (
 )
 
 func Test_Television(t *testing.T) {
+	t.Parallel()
 	tv := NewTelevision()
 
 	tv.TurnOn()

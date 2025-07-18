@@ -8,6 +8,7 @@ import (
 )
 
 func Test_GetInstance(t *testing.T) {
+	t.Parallel()
 	// Get the singleton instance
 	s1 := singleton.GetInstance()
 

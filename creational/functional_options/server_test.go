@@ -8,6 +8,7 @@ import (
 )
 
 func Test_NewServer(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		name         string
 		options      []functionaloptions.Option
@@ -47,6 +48,7 @@ func Test_NewServer(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			server, err := functionaloptions.NewHTTPServer(tt.options...)
 			require.ErrorIs(t, err, tt.wantErr)
 			if err != nil {

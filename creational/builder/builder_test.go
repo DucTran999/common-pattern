@@ -8,7 +8,9 @@ import (
 )
 
 func Test_HouseBuilder(t *testing.T) {
+	t.Parallel()
 	t.Run("FullyConfiguredHouse", func(t *testing.T) {
+		t.Parallel()
 		house := builder.NewHouseBuilder().
 			SetWindows(2).
 			SetWalls("brick").
@@ -23,6 +25,7 @@ func Test_HouseBuilder(t *testing.T) {
 	})
 
 	t.Run("MinimalHouse", func(t *testing.T) {
+		t.Parallel()
 		house := builder.NewHouseBuilder().
 			SetWalls("wood").
 			Build()
@@ -34,6 +37,7 @@ func Test_HouseBuilder(t *testing.T) {
 	})
 
 	t.Run("DefaultHouse", func(t *testing.T) {
+		t.Parallel()
 		house := builder.NewHouseBuilder().
 			SetWalls("wood").
 			SetDoors(-1).

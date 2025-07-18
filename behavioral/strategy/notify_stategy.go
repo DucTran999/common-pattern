@@ -1,12 +1,19 @@
 package strategy
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 type ChannelStrategy int
 
 const (
 	EmailStrategy ChannelStrategy = iota
 	SMSStrategy
+)
+
+var (
+	ErrInvalidChannelStrategy = errors.New("invalid channel strategy")
 )
 
 func (c ChannelStrategy) String() string {
@@ -41,7 +48,7 @@ func (nm *notificationManager) RegisterNotifier(strategy ChannelStrategy, notifi
 func (nm *notificationManager) SendNotification(channel ChannelStrategy, to, message string) error {
 	notifier, ok := nm.notifierMap[channel]
 	if !ok {
-		return fmt.Errorf("unsupported notification channel: %d", channel)
+		return fmt.Errorf("%w: %d", ErrInvalidChannelStrategy, channel)
 	}
 
 	return notifier.Send(to, message)

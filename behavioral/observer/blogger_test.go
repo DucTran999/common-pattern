@@ -8,6 +8,7 @@ import (
 )
 
 func Test_Subscriber(t *testing.T) {
+	t.Parallel()
 	blogs := observer.NewBlogs()
 
 	alice := observer.NewSubscriber("Alice")

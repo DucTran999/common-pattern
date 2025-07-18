@@ -1,6 +1,8 @@
 package bridge
 
-import "fmt"
+import (
+	"log"
+)
 
 type Printer interface {
 	PrintFile()
@@ -10,12 +12,12 @@ type Printer interface {
 type Epson struct{}
 
 func (e *Epson) PrintFile() {
-	fmt.Println("Printing using Epson")
+	log.Println("Printing using Epson")
 }
 
 // Cannon Printer
 type Cannon struct{}
 
 func (c *Cannon) PrintFile() {
-	fmt.Println("Printing using Cannon")
+	log.Println("Printing using Cannon")
 }
